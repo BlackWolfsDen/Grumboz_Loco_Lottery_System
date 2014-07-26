@@ -45,13 +45,14 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `item` int(11) NOT NULL,
   `timer` bigint(20) NOT NULL,
   `operation` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `mumax` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `comments` varchar(21844) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 MAX_ROWS=1;
 
 -- Dumping data for table lotto.settings: ~1 rows (approximately)
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
-REPLACE INTO `settings` (`item`, `timer`, `operation`, `comments`) VALUES
-	(44209, 604800000, 0, 'item :\r\nthe item id for what they will win(custom currency)\r\n\r\ntimer :\r\n604800000 == 1 week\r\n86400000 == 1 day\r\n3600000 == 1 hour\r\n');
+REPLACE INTO `settings` (`item`, `timer`, `operation`, `mumax`, `comments`) VALUES
+	(44209, 604800000, 0, 0, 'item :\r\nthe item id for what they will win(custom currency)\r\n\r\ntimer :\r\n604800000 == 1 week\r\n86400000 == 1 day\r\n3600000 == 1 hour\r\n');
 /*!40000 ALTER TABLE `settings` ENABLE KEYS */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
