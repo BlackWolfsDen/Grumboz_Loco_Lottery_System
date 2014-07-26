@@ -1,9 +1,6 @@
-local function LottoPreparedStatement(key, ...)
-	local Query = {
-		[1] = "UPDATE lotto."..table.." SET `%s` = '%s' WHERE `id` = '%s';",
-		[2] = "UPDATE lotto.history SET `%s` = '%s' WHERE `id` = '%s';",
-		[3] = "UPDATE lotto.entries SET `%s` = '%s' WHERE `id` = '%s';"
-			}
+local function LottoUpdate(id, table, location, data)
+		WorldDBQuery("UPDATE lotto."..table.." SET `"..location.."` = "..data.." WHERE `id` = "..id..";")
+			
 	
 end
 
