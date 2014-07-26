@@ -1,6 +1,8 @@
 local npcid = 390000
+
 LottoSettings = {};
 LottoEntries = {};
+LottoEntriez = {};
 LottoHistory = {};
 
 local function LottoLoader(event)
@@ -8,10 +10,10 @@ local LS = WorldDBQuery("SELECT * FROM lotto.settings;");
 	if(LS)then
 		repeat
 			LottoSettings["SERVER"] = {
-				item = LS:GetUInt32(0),
-				timer = LS:GetUInt32(1),
-				operation = LS:GetUInt32(2),
-				mumax = LS:GetUInt32(3) -- max for winnings random multiplier
+				item = LS:GetUInt32(1),
+				timer = LS:GetUInt32(2),
+				operation = LS:GetUInt32(3),
+				mumax = LS:GetUInt32(4) -- max for winnings random multiplier
 						};
 		until not LS:NextRow()
 	end
@@ -28,18 +30,20 @@ local LH = WorldDBQuery("SELECT * FROM lotto.history;");
 		until not LH:NextRow()
 	end
 	
-local LE = WorldDBQuery("SELECT * FROM lotto.entries WHERE `count` > '0';");
+local LE = WorldDBQuery("SELECT * FROM lotto.entries WHERE `count` >= '1';");
 	if(LE) then
 		repeat
-			LottoEntries[LE:GetString(1)] = {
+			LottoEntries[LE:GetUInt32(0)] = {
 				id = LE:GetUInt32(0),
 				name = LE:GetString(1),
 				count = LE:GetUInt32(2)
 							};
-		until not LQ:NextRow()
-		LottoEntries["SERVER"] = {1};
+				print(LE:GetUInt32(0))
+		until not LE:NextRow()
+		print(#LottoEntries)
+		LottoEntriez["SERVER"] = {1};
 	else
-		LottoEntries["SERVER"] = {0};
+		LottoEntriez["SERVER"] = {0};
 	
 	end
 end
@@ -87,17 +91,22 @@ local id = (#LottoHistory + 1)
 end
 
 local function Tally(event)
+print("tally")
 print(#LottoEntries)
 print(LottoSettings["SERVER"].timer)
 print((LottoHistory[#LottoHistory].initdate+LottoSettings["SERVER"].timer))
 print(GetGameTime())
-	if(LottoEntries["SERVER"][1]==0)then
+	if(LottoEntriez["SERVER"][1]==0)then
 		print("No Lotto Entries")
 	else
 		local multiplier = math.random(1, LottoSettings["SERVER"].mumax)
 		local win = math.random(1, #LottoEntries)
+		print("win:"..win)
 		local Winner = LottoEntries[win].name
-		local player = GetPlayerByName(Winner)
+		print("winner:"..Winner)
+		local player = GetPlayerByName(LottoEntries[win].name)
+		print(player)
+		print("Player:"..Winner.." has won:"..LottoEntries[win].count * multiplier.." coins.")
 		player:SendMail("Lotto Winner.", "Contgratulations Winner #"..#LottoHistory..".", player:GetGUIDLow(), 0, 1, 1000, LottoSettings["SERVER"].item, LottoEntries[win].count * multiplier)
 		SendWorldMessage("Contgratulations to "..LottoEntries[win].name.." our #"..#LottoEntries.." winner.")
 	
@@ -112,12 +121,15 @@ print(GetGameTime())
 end
 
 function Lotto(event)
+print(LottoSettings["SERVER"].timer)
 
 	if(LottoSettings["SERVER"].operation==1)then
 		if(#LottoHistory==0)then
 			FirstLotto(GetGameTime())
 		else
-			CreateLuaEvent(Tally, ((LottoHistory[#LottoHistory].initdate+LottoSettings["SERVER"].timer)-GetGameTime()), 1)
+			print((LottoHistory[#LottoHistory].initdate+LottoSettings["SERVER"].timer))
+			print(GetGameTime())
+			CreateLuaEvent(Tally, LottoSettings["SERVER"].timer, 1)
 			print("Grumbo'z Goliath Online")
 		end
 	end	
