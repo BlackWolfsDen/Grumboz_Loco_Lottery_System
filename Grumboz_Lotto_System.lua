@@ -33,7 +33,7 @@ local LH = WorldDBQuery("SELECT * FROM lotto.history;");
 local LE = WorldDBQuery("SELECT * FROM lotto.entries WHERE `count` >= '1';");
 	if(LE) then
 		repeat
-			LottoEntries[LE:GetUInt32(0)] = {
+			LottoEntries[LE:GetString(1)] = {
 				id = LE:GetUInt32(0),
 				name = LE:GetString(1),
 				count = LE:GetUInt32(2)
@@ -62,6 +62,12 @@ local function FirstLotto(gametime)
 	print("Grumbo'z Goliath Online")
 end
 
+local function LottoEnter(playername)
+local count = (LottoEntries[playername].count + 1)
+	WorldDBQuery("UPDATE lotto.entries SET `count` = '"..count.."' WHERE `name` = "..playername..";")
+	LottoEntries[playername].count = count
+end
+
 local function NewLottoEntry(name)
 local NLEID = (#LottoHistory+1)
 	WorldDBQuery("INSERT INTO lotto.entries SET `id` = '"..NLEID.."';")
@@ -71,11 +77,6 @@ local NLEID = (#LottoHistory+1)
 				name = name
 						};
 	LottoEnter(name)
-end
-
-local function LottoEnter(name)
-	WorldDBQuery("UPDATE lotto.entries SET `count` = `count`+1 WHERE `name` = "..name..";")
-	LottoEntries[name].count = (LottoEntries[name].count +1)
 end
 
 local function LottoUpdate(table, location,  data, id)
@@ -139,11 +140,12 @@ RegisterServerEvent(16, Lotto)
 
 Lotto(1)
 
-local function LottoOnHello(event, player)
+local function LottoOnHello(event, player, object)
+	VendorRemoveAllItems(npcid)
 	player:GossipClearMenu()
 	player:GossipMenuAddItem(0, "Enter the lotto.", 0, 100)
 	player:GossipMenuAddItem(0, "never mind.", 0, 10)
-	player:GossipSendMenu(1, player)
+	player:GossipSendMenu(1, object)
 end
 
 local function LottoOnSelect(event, player, unit, sender, intid, code)
@@ -152,16 +154,19 @@ local function LottoOnSelect(event, player, unit, sender, intid, code)
 	end
 
 	if(intid==100)then
+	print
 		if(player:GetItemCount(LottoSettings["SERVER"].item)==0)then
 			player:SendBroadcastMessage("You dont have enough currency to enter.")
 		else
+			player:GossipComplete()
 			player:RemoveItem(LottoSettings["SERVER"].item, 1)
-
-			if(LottoEntries[player:GetName()])then
-				LottoEnter(name)
-			else
-				NewLottoEntry(name)
-			end
+				if(LottoEntries[player:GetName()])then
+					local count = (LottoEntries[player:GetName()].count + 1)
+					LottoEntry(player:GetName())
+					player:SendBroadcastMessage("You are now entered "..count.." times.")
+				else
+					NewLottoEntry(player:GetName())
+				end
 		end
 		player:GossipComplete()
 	else
