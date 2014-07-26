@@ -17,11 +17,11 @@ USE `lotto`;
 
 -- Dumping structure for table lotto.entries
 CREATE TABLE IF NOT EXISTS `entries` (
-  `id` int(11) unsigned DEFAULT NULL,
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   `count` int(11) unsigned NOT NULL,
   KEY `id` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 -- Dumping data for table lotto.entries: ~1 rows (approximately)
 /*!40000 ALTER TABLE `entries` DISABLE KEYS */;
@@ -32,32 +32,34 @@ REPLACE INTO `entries` (`id`, `name`, `count`) VALUES
 
 -- Dumping structure for table lotto.history
 CREATE TABLE IF NOT EXISTS `history` (
-  `id` int(11) unsigned DEFAULT NULL,
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `start` bigint(20) unsigned DEFAULT NULL,
-  `winner` varchar(50) DEFAULT NULL,
-  `amount` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `winner` varchar(50) NOT NULL,
+  `amount` int(11) DEFAULT NULL,
+  `entries` int(11) DEFAULT '0',
+  KEY `id` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
--- Dumping data for table lotto.history: ~1 rows (approximately)
+-- Dumping data for table lotto.history: ~0 rows (approximately)
 /*!40000 ALTER TABLE `history` DISABLE KEYS */;
-REPLACE INTO `history` (`id`, `start`, `winner`, `amount`) VALUES
-	(1, 1406386899, NULL, NULL);
 /*!40000 ALTER TABLE `history` ENABLE KEYS */;
 
 
 -- Dumping structure for table lotto.settings
 CREATE TABLE IF NOT EXISTS `settings` (
-  `item` int(11) NOT NULL,
-  `timer` bigint(20) NOT NULL,
+  `id` int(1) unsigned NOT NULL AUTO_INCREMENT,
+  `item` int(11) unsigned NOT NULL,
+  `timer` bigint(20) unsigned NOT NULL,
   `operation` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `mumax` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `comments` varchar(21844) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 MAX_ROWS=1;
+  `comments` varchar(21844) NOT NULL,
+  KEY `id` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 MAX_ROWS=1;
 
 -- Dumping data for table lotto.settings: ~1 rows (approximately)
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
-REPLACE INTO `settings` (`item`, `timer`, `operation`, `mumax`, `comments`) VALUES
-	(44209, 604800000, 1, 10, 'item :\r\nthe item id for what they will win(custom currency)\r\n\r\ntimer :\r\n604800000 == 1 week\r\n86400000 == 1 day\r\n3600000 == 1 hour\r\n');
+REPLACE INTO `settings` (`id`, `item`, `timer`, `operation`, `mumax`, `comments`) VALUES
+	(1, 44209, 60000, 1, 10, 'item :\r\nthe item id for what they will win(custom currency)\r\n\r\ntimer :\r\n604800000 == 1 week\r\n86400000 == 1 day\r\n3600000 == 1 hour\r\n');
 /*!40000 ALTER TABLE `settings` ENABLE KEYS */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
