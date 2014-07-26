@@ -1,9 +1,12 @@
-local function LottoUpdate(id, table, location, data)
-		WorldDBQuery("UPDATE lotto."..table.." SET `"..location.."` = "..data.." WHERE `id` = "..id..";")
-			
-	
+local function LottoUpdate(table, location,  data, id)
+	WorldDBQuery("UPDATE lotto."..table.." SET `"..location.."` = "..data.." WHERE `id` = "..id..";")
 end
-
+local function NewLotto(gametime)
+local id = (#LottoHistory + 1)
+	WorldDBQuery("INSERT INTO lotto.history SET `id` = '"..id.."';");
+	WorldDBQuery("UPDATE lotto.history SET `start` = "..gametime.." WHERE `id` = "..id..";")
+	LottoHistory[id].initdate = gametime	
+end
 function Lotto(event)
 
 local LS = WorldDBQuery("SELECT * FROM lotto.settings;");
@@ -52,6 +55,14 @@ local function Tally(event)
 	local player = GetPlayerByName(Winner)
 	player:SendMail("Lotto Winner.", "Contgratulations Winner #"..#LottoHistory..".", player:GetGUIDLow(), 0, 1, 1000, LottoSettings["SERVER"].item, LottoEntries[win].count * multiplier)
 	SendWorldMessage("Contgratulations to "..LottoEntries[win].name.." our #"..#LottoEntries.." winner.")
+
+		for a=1, #LottoEntries do
+			LottoUpdate(a, entries, count, 0)
+		end
+	NewLotto(GetGameTime())
+	if(LS["SERVER"].operation==1)then
+		CreateLuaEvent(Tally, 1, (LottoHistory[#LotoHistory].initdate+LS["SERVER"].timer-GetGameTime()))
+	end
 end
 
 RegisterServerEvent(16, Lotto)
