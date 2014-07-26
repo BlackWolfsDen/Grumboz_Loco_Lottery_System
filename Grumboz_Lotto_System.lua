@@ -4,16 +4,21 @@ local function NewLottoEntry(name)
 local NLEID = (#LottoHistory+1)
 	WorldDBQuery("INSERT INTO lotto.entries SET `id` = '"..NLEID.."';")
 	WorldDBQuery("UPDATE lotto.entries SET `name` = '"..name.."' WHERE `id` = '"..NLEID.."';")
+	LottoEntries[name] = {
+				id = NLEID,
+				name = name
+						};
+	LottoEnter(name)
 end
 
 local function LottoEnter(name)
 	WorldDBQuery("UPDATE lotto.entries SET `count` = `count`+1 WHERE `name` = "..name..";")
-	LottoEntries[id].count = 0
+	LottoEntries[name].count = (LottoEntries[name].count +1)
 end
 
 local function LottoUpdate(table, location,  data, id)
 	WorldDBQuery("UPDATE lotto."..table.." SET `"..location.."` = "..data.." WHERE `id` = "..id..";")
-	LottoEntries[id].count = 0
+	LottoEntries[name].count = 0
 end
 
 local function NewLotto(gametime)
@@ -84,7 +89,6 @@ end
 
 RegisterServerEvent(16, Lotto)
 
-
 local function LottoOnHello(event, player)
 	player:GossipClearMenu()
 	player:GossipMenuAddItem(0, "Enter the lotto.", 0, 100)
@@ -96,6 +100,7 @@ local function LottoOnSelect(event, player, unit, sender, intid, code)
 	if(intid==10)then
 		player:GossipComplete()
 	end
+
 	if(intid==100)then
 		if(player:GetItemCount(LottoSettings["SERVER"].item)==0)then
 			player:SendBroadcastMessage("You dont have enough currency to enter.")
