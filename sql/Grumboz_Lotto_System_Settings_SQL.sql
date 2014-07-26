@@ -19,24 +19,29 @@ USE `lotto`;
 CREATE TABLE IF NOT EXISTS `entries` (
   `id` int(11) unsigned DEFAULT NULL,
   `name` varchar(50) NOT NULL,
-  `count` int(11) unsigned NOT NULL
+  `count` int(11) unsigned NOT NULL,
+  KEY `id` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- Dumping data for table lotto.entries: ~0 rows (approximately)
+-- Dumping data for table lotto.entries: ~1 rows (approximately)
 /*!40000 ALTER TABLE `entries` DISABLE KEYS */;
+REPLACE INTO `entries` (`id`, `name`, `count`) VALUES
+	(1, 'SERVER', 0);
 /*!40000 ALTER TABLE `entries` ENABLE KEYS */;
 
 
 -- Dumping structure for table lotto.history
 CREATE TABLE IF NOT EXISTS `history` (
   `id` int(11) unsigned DEFAULT NULL,
-  `start` int(11) unsigned DEFAULT NULL,
+  `start` bigint(20) unsigned DEFAULT NULL,
   `winner` varchar(50) DEFAULT NULL,
   `amount` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- Dumping data for table lotto.history: ~0 rows (approximately)
+-- Dumping data for table lotto.history: ~1 rows (approximately)
 /*!40000 ALTER TABLE `history` DISABLE KEYS */;
+REPLACE INTO `history` (`id`, `start`, `winner`, `amount`) VALUES
+	(1, 1406386899, NULL, NULL);
 /*!40000 ALTER TABLE `history` ENABLE KEYS */;
 
 
@@ -52,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
 -- Dumping data for table lotto.settings: ~1 rows (approximately)
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
 REPLACE INTO `settings` (`item`, `timer`, `operation`, `mumax`, `comments`) VALUES
-	(44209, 604800000, 0, 0, 'item :\r\nthe item id for what they will win(custom currency)\r\n\r\ntimer :\r\n604800000 == 1 week\r\n86400000 == 1 day\r\n3600000 == 1 hour\r\n');
+	(44209, 604800000, 1, 10, 'item :\r\nthe item id for what they will win(custom currency)\r\n\r\ntimer :\r\n604800000 == 1 week\r\n86400000 == 1 day\r\n3600000 == 1 hour\r\n');
 /*!40000 ALTER TABLE `settings` ENABLE KEYS */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
