@@ -1,15 +1,22 @@
+local npcid = 390000
+
+local function NewLottoEntry(name)
+local NLEID = (#LottoHistory+1)
+	WorldDBQuery("INSERT INTO lotto.entries SET `id` = '"..NLEID.."';")
+	WorldDBQuery("UPDATE lotto.entries SET `name` = '"..name.."' WHERE `id` = '"..NLEID.."';")
+end
 local function LottoEnter(name)
 	WorldDBQuery("UPDATE lotto.entries SET `count` = `count`+1 WHERE `name` = "..name..";")
-	LottoEntries[id].count = 0
+	LottoEntries[name].count = 0
 end
 local function LottoUpdate(table, location,  data, id)
 	WorldDBQuery("UPDATE lotto."..table.." SET `"..location.."` = "..data.." WHERE `id` = "..id..";")
 	LottoEntries[id].count = 0
 end
 local function NewLotto(gametime)
-local id = (#LottoHistory + 1)
+local NLID = (#LottoHistory + 1)
 	WorldDBQuery("INSERT INTO lotto.history SET `id` = '"..id.."';");
-	WorldDBQuery("UPDATE lotto.history SET `start` = "..gametime.." WHERE `id` = "..id..";")
+	WorldDBQuery("UPDATE lotto.history SET `start` = "..gametime.." WHERE `id` = "..NLID..";")
 	LottoHistory[id].initdate = gametime	
 end
 function Lotto(event)
