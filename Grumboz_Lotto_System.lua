@@ -1,5 +1,6 @@
 local function LottoUpdate(table, location,  data, id)
 	WorldDBQuery("UPDATE lotto."..table.." SET `"..location.."` = "..data.." WHERE `id` = "..id..";")
+	LottoEntries[id].count = 0
 end
 local function NewLotto(gametime)
 local id = (#LottoHistory + 1)
@@ -57,7 +58,7 @@ local function Tally(event)
 	SendWorldMessage("Contgratulations to "..LottoEntries[win].name.." our #"..#LottoEntries.." winner.")
 
 		for a=1, #LottoEntries do
-			LottoUpdate(a, entries, count, 0)
+			LottoUpdate(entries, count, 0, a)
 		end
 	NewLotto(GetGameTime())
 	if(LS["SERVER"].operation==1)then
@@ -66,5 +67,3 @@ local function Tally(event)
 end
 
 RegisterServerEvent(16, Lotto)
-
-
