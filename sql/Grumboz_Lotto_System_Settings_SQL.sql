@@ -19,8 +19,8 @@ USE `lotto`;
 CREATE TABLE IF NOT EXISTS `entries` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
-  `count` int(11) unsigned NOT NULL,
-  KEY `id` (`id`)
+  `count` int(11) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 -- Dumping data for table lotto.entries: ~1 rows (approximately)
@@ -38,9 +38,9 @@ CREATE TABLE IF NOT EXISTS `history` (
   `amount` int(11) DEFAULT NULL,
   `entries` int(11) DEFAULT '0',
   KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=latin1;
 
--- Dumping data for table lotto.history: ~0 rows (approximately)
+-- Dumping data for table lotto.history: ~20 rows (approximately)
 /*!40000 ALTER TABLE `history` DISABLE KEYS */;
 /*!40000 ALTER TABLE `history` ENABLE KEYS */;
 
