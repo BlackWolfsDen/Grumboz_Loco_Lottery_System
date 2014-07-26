@@ -12,9 +12,10 @@ function Lotto(event)
 local LS = WorldDBQuery("SELECT * FROM lotto.settings;");
 	if(LS)then
 		repeat
-			LottoSettings[SERVER] = {
+			LottoSettings["SERVER"] = {
 				item = LS:GetUInt32(0),
-				timer = LS:GetUInt32(1)
+				timer = LS:GetUInt32(1),
+				operation = LS:GetUInt32(2)
 												};
 		until not LS:NextRow()
 	end
@@ -34,7 +35,6 @@ local LH = WorldDBQuery("SELECT * FROM lotto.history;");
 local LE = WorldDBQuery("SELECT * FROM lotto.entries;");
 	if(LE) then
 		repeat
-		
 			LottoEntries[LE:GetUInt32(0)] = {
 							id = LE:GetUInt32(0),
 							name = LE:GetString(1),
@@ -42,9 +42,20 @@ local LE = WorldDBQuery("SELECT * FROM lotto.entries;");
 											};
 		until not LQ:NextRow()
 	end
-	if(LE)then
+	if(LS["SERVER"].operation==1)then
+		CreateLuaEvent(Tally, 1, (LottoHistory[#LotoHistory].initdate+LS["SERVER"].timer-GetGameTime()))
 	end
 end
 
+local function Tally(event)
+	local multiplier = math.random(1, 10)
+	local win = math.random(1, #LottoEntries)
+	local Winner = LottoEntries[win].name
+	local player = GetPlayerByName(Winner)
+	player:SendMail("Lotto Winner.", "Contgratulations Winner #"..#LottoHistory..".", player:GetGUIDLow(), 0, 1, 1000, LottoSettings["SERVER"].item, LottoEntries[win].count * multiplier)
+	SendWorldMessage("Contgratulations to "..LottoEntries[win].name.." our #"..#LottoEntries.." winner.")
+end
+
 RegisterServerEvent(16, Lotto)
+
 
