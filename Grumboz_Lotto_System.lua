@@ -1,3 +1,7 @@
+local function LottoEnter(name)
+	WorldDBQuery("UPDATE lotto.entries SET `count` = `count`+1 WHERE `name` = "..name..";")
+	LottoEntries[id].count = 0
+end
 local function LottoUpdate(table, location,  data, id)
 	WorldDBQuery("UPDATE lotto."..table.." SET `"..location.."` = "..data.." WHERE `id` = "..id..";")
 	LottoEntries[id].count = 0
@@ -16,7 +20,8 @@ local LS = WorldDBQuery("SELECT * FROM lotto.settings;");
 			LottoSettings["SERVER"] = {
 				item = LS:GetUInt32(0),
 				timer = LS:GetUInt32(1),
-				operation = LS:GetUInt32(2)
+				operation = LS:GetUInt32(2),
+				mumax = LS:GetUInt32(3) -- max for winnings random multiplier
 						};
 		until not LS:NextRow()
 	end
@@ -33,7 +38,7 @@ local LH = WorldDBQuery("SELECT * FROM lotto.history;");
 		until not (LH)
 	end
 	
-local LE = WorldDBQuery("SELECT * FROM lotto.entries;");
+local LE = WorldDBQuery("SELECT * FROM lotto.entries WHERE `count` > '0';");
 	if(LE) then
 		repeat
 			LottoEntries[LE:GetUInt32(0)] = {
@@ -50,7 +55,7 @@ local LE = WorldDBQuery("SELECT * FROM lotto.entries;");
 end
 
 local function Tally(event)
-	local multiplier = math.random(1, 10)
+	local multiplier = math.random(1, LS["SERVER"].mumax)
 	local win = math.random(1, #LottoEntries)
 	local Winner = LottoEntries[win].name
 	local player = GetPlayerByName(Winner)
@@ -67,3 +72,32 @@ local function Tally(event)
 end
 
 RegisterServerEvent(16, Lotto)
+
+local npcid = 390000
+
+local function LottoOnHello(event, player)
+	player:GossipClearMenu()
+	player:GossipMenuAddItem(0, "Enter the lotto.", 0, 100)
+	player:GossipMenuAddItem(0, "never mind.", 0, 10)
+	player:GossipSendMenu(1, player)
+end
+
+local function LottoOnSelect(event, player, unit, sender, intid, code)
+	if(intid==10)then
+		player:GossipComplete()
+	end
+	if(intid==100)then
+		if(player:GetItemCount(LS["SERVER"].item)==0)then
+			player:SendBroadcastMessage("You dont have enough currency to enter.")
+		else
+			player:RemoveItem(LS["SERVER"].item, 1)
+			LottoEnter(name)
+		end
+		player:GossipComplete()
+	else
+	LottoOnHello(1, player)
+	end
+end
+
+RegisterCreatureGossipEvent(npcid, 1, LottoOnHello)
+RegisterCreatureGossipEvent(npcid, 2, LottoOnSelect)
