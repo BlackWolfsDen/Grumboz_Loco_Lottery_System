@@ -30,10 +30,10 @@ local LH = WorldDBQuery("SELECT * FROM lotto.history;");
 		until not LH:NextRow()
 	end
 	
-local LE = WorldDBQuery("SELECT * FROM lotto.entries WHERE `count` >= '1';");
+local LE = WorldDBQuery("SELECT * FROM lotto.entries;");
 	if(LE) then
 		repeat
-			LottoEntries[LE:GetString(1)] = {
+			LottoEntries[LE:GetUInt32(0)] = {
 				id = LE:GetUInt32(0),
 				name = LE:GetString(1),
 				count = LE:GetUInt32(2)
@@ -41,16 +41,14 @@ local LE = WorldDBQuery("SELECT * FROM lotto.entries WHERE `count` >= '1';");
 				print(LE:GetUInt32(0))
 		until not LE:NextRow()
 		print(#LottoEntries)
-		LottoEntriez["SERVER"] = {1};
-	else
-		LottoEntriez["SERVER"] = {0};
-	
 	end
+
 end
+
 LottoLoader(1)
 
 local function FirstLotto(gametime)
-	local NLID = (#LottoHistory+1)
+	local NLID = (1)
 	WorldDBQuery("INSERT INTO lotto.history SET `id` = '"..NLID.."';")
 	WorldDBQuery("UPDATE lotto.history SET `start` = '"..gametime.."' WHERE `id` = '"..NLID.."';")
 
@@ -62,60 +60,90 @@ local function FirstLotto(gametime)
 	print("Grumbo'z Goliath Online")
 end
 
-local function LottoEnter(playername)
-local count = (LottoEntries[playername].count + 1)
-	WorldDBQuery("UPDATE lotto.entries SET `count` = '"..count.."' WHERE `name` = "..playername..";")
+local function GetEntries()
+local LZ = WorldDBQuery("SELECT * FROM lotto.entries WHERE `count`>='1';");
+	local count = 0
+
+	if(LZ) then
+	
+		repeat
+		count = count + 1
+		print(count.."count")
+			if(count>=2)then
+				LottoEntriez["SERVER"] = {1, count};
+			else
+				LottoEntriez["SERVER"] = {0};
+			end
+		until not LZ:NextRow()
+	return count;
+	end	
+end
+
+GetEntries()
+
+local function NewLotto(id)
+end
+
+local function LottoEntry(playername)
+print("line 66 "..LottoEntries[playername].count)
+local count = LottoEntries[playername].count + 1
+	WorldDBQuery("UPDATE lotto.entries SET `count` = '"..count.."' WHERE `name` = '"..playername.."';")
 	LottoEntries[playername].count = count
 end
 
 local function NewLottoEntry(name)
+print(player)
 local NLEID = (#LottoHistory+1)
 	WorldDBQuery("INSERT INTO lotto.entries SET `id` = '"..NLEID.."';")
 	WorldDBQuery("UPDATE lotto.entries SET `name` = '"..name.."' WHERE `id` = '"..NLEID.."';")
 	LottoEntries[name] = {
 				id = NLEID,
-				name = name
+				name = name,
+				count = 0
 						};
-	LottoEnter(name)
+	LottoEntry(name)
 end
 
-local function LottoUpdate(table, location,  data, id)
-	WorldDBQuery("UPDATE lotto."..table.." SET `"..location.."` = "..data.." WHERE `id` = "..id..";")
-	LottoEntries[name].count = 0
+local function LottoUpdate(id)
+	WorldDBQuery("UPDATE lotto.entries SET `count` = '0' WHERE `id` = "..id..";")
+	LottoEntries[id].count = 0
 end
 
 local function NewLotto(gametime)
 local id = (#LottoHistory + 1)
 	WorldDBQuery("INSERT INTO lotto.history SET `id` = '"..id.."';");
 	WorldDBQuery("UPDATE lotto.history SET `start` = "..gametime.." WHERE `id` = "..id..";")
-	LottoHistory[id].initdate = gametime	
+	LottoHistory[id] = {
+			initdate = gametime
+						};
 end
 
 local function Tally(event)
 print("tally")
 print(#LottoEntries)
-print(LottoSettings["SERVER"].timer)
-print((LottoHistory[#LottoHistory].initdate+LottoSettings["SERVER"].timer))
-print(GetGameTime())
+GetEntries()
 	if(LottoEntriez["SERVER"][1]==0)then
 		print("No Lotto Entries")
 	else
 		local multiplier = math.random(1, LottoSettings["SERVER"].mumax)
-		local win = math.random(1, #LottoEntries)
+		local win = math.random(1, GetEntries())
 		print("win:"..win)
 		local Winner = LottoEntries[win].name
 		print("winner:"..Winner)
-		local player = GetPlayerByName(LottoEntries[win].name)
-		print(player)
+		local player = GetPlayerByName("..Winner.."):GetName()
+		print(GetPlayerByName("..LottoEntries[win].name.."):GetName())
+		
 		print("Player:"..Winner.." has won:"..LottoEntries[win].count * multiplier.." coins.")
-		player:SendMail("Lotto Winner.", "Contgratulations Winner #"..#LottoHistory..".", player:GetGUIDLow(), 0, 1, 1000, LottoSettings["SERVER"].item, LottoEntries[win].count * multiplier)
+		player:SendMail("Lotto Winner.", "Contgratulations Winner #"..#LottoHistory..".", 0, player:GetGUIDLow(), 1, 1000, LottoSettings["SERVER"].item, LottoEntries[win].count * multiplier)
 		SendWorldMessage("Contgratulations to "..LottoEntries[win].name.." our #"..#LottoEntries.." winner.")
 	
-			for a=1, #LottoEntries do
-				LottoUpdate(entries, count, 0, a)
-			end
-		NewLotto(GetGameTime())
+		for a=1, #LottoEntries do
+			LottoUpdate(a)
+		end
 	end
+
+	NewLotto(GetGameTime())
+
 	if(LottoSettings["SERVER"].operation==1)then
 		CreateLuaEvent(Tally, ((LottoHistory[#LottoHistory].initdate+LottoSettings["SERVER"].timer)-GetGameTime()), 1)
 	end
@@ -154,7 +182,6 @@ local function LottoOnSelect(event, player, unit, sender, intid, code)
 	end
 
 	if(intid==100)then
-	print
 		if(player:GetItemCount(LottoSettings["SERVER"].item)==0)then
 			player:SendBroadcastMessage("You dont have enough currency to enter.")
 		else
@@ -163,9 +190,9 @@ local function LottoOnSelect(event, player, unit, sender, intid, code)
 				if(LottoEntries[player:GetName()])then
 					local count = (LottoEntries[player:GetName()].count + 1)
 					LottoEntry(player:GetName())
-					player:SendBroadcastMessage("You are now entered "..count.." times.")
+					player:SendBroadcastMessage("You have entered "..count.." times.")
 				else
-					NewLottoEntry(player:GetName())
+					NewLottoEntry(player:GetName(), player)
 				end
 		end
 		player:GossipComplete()
