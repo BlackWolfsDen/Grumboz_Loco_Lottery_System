@@ -51,7 +51,7 @@ local LZ = WorldDBQuery("SELECT * FROM lotto.entries WHERE `count`>='1';");
 				name = LZ:GetString(1),
 				count = LZ:GetUInt32(2)
 							};
-		print("EntriezLoader")		
+		print(LottoEntriez[LZ:GetUInt32(0)].id)		
 		until not LZ:NextRow()
 		print(#LottoEntriez)
 	end
