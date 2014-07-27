@@ -45,6 +45,7 @@ LottoLoader(1)
 local function LoadLottoEntriez()
 local LZ = WorldDBQuery("SELECT * FROM lotto.entries WHERE `count`>='1';");
 	if(LZ)then
+		LottoEntriez = {};
 		repeat
 			LottoEntriez[LZ:GetUInt32(0)] = {
 				id = LZ:GetUInt32(0),
@@ -132,6 +133,8 @@ local function Lotto()
 end
 
 local function Tally(event)
+local c = nil
+local pot = 0	
 LoadLottoEntriez()
 print("tally")
 print(#LottoEntriez)
@@ -140,21 +143,24 @@ print(#LottoEntriez)
 		SendWorldMessage("No Winners this lotto round.")
 	else
 		local multiplier = math.random(1, LottoSettings["SERVER"].mumax)
-		local win = math.random(1, #LottoEntriez)
+		local win = math.random(1, 1) -- #LottoEntriez)
+		print("multi:"..multiplier)
 		print("win:"..win)
 		local name = LottoEntriez[win].name
 		local player = GetPlayerByName(name)
 
 			if(player)then
 				print(player)
-				local reward = 0
-
 				for r=1, #LottoEntriez do
-					local reward = (reward + LottoEntriez[r].count)
+					local c = c + (LottoEntriez[r].count)
+					print(c)
+					local pot = (pot+c)
 				end
-
-				SendWorldMessage("Contgratulations to "..LottoEntries[win].name.." our #"..#LottoHistory.." winner.")
-				player:AddItem(LottoSettings["SERVER"].item, (reward+(LottoEntries[win].count * multiplier)))
+				print(pot)
+				local bet = ((LottoEntriez[win].count)*multiplier)
+				print(bet)
+				SendWorldMessage("Contgratulations to "..LottoEntriez[win].name.." our #"..#LottoHistory.." winner.")
+				player:AddItem(LottoSettings["SERVER"].item, (pot+bet))
 			
 				for a=1, #LottoEntries do
 					FlushLotto(a)
