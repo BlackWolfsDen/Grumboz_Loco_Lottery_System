@@ -76,12 +76,14 @@ local function GetId(guidlow)
 end
 
 local function EnterLotto(guidlow)
-local count = LottoEntries[GetId(guidlow)].count + 1
-	WorldDBQuery("UPDATE lotto.entries SET `count` = '"..count.."' WHERE `guidlow` = '"..guidlow.."';")
-	LottoEntries[guidlow].count = count
+local elid = GetId(guidlow)
+local elcount = LottoEntries[elid].count + 1
+	WorldDBQuery("UPDATE lotto.entries SET `count` = '"..elcount.."' WHERE `guidlow` = '"..guidlow.."';")
+	LottoEntries[GetId(guidlow)].count = elcount
+	GetPlayerByGUID(guidlow):SendBroadcastMessage("You have entered "..elcount.." times.")
 end
 
-local function NewLottoEntry(guidlow)
+local function NewLottoEntry(guidlow, chain)
 local NLEID = (#LottoEntries+1)
 	WorldDBQuery("INSERT INTO lotto.entries SET `guidlow` = '"..guidlow.."';")
 	LottoEntries[NLEID] = {
@@ -89,7 +91,10 @@ local NLEID = (#LottoEntries+1)
 				GUIDLow = guidlow,
 				count = 0
 						};
-	EnterLotto(guidlow)
+	if(chain==1)then
+		EnterLotto(guidlow)
+	else
+	end
 end
 
 local function FlushLotto(id)
@@ -108,19 +113,12 @@ end
 local function Tally(event)
 print("tally")
 print(#LottoEntries)
-	if(LottoEntriez["SERVER"][1]==0)then
-		print("No Lotto Entries")
+	if(#LottoEntries < 4)then
+		print("Not enough Lotto Entries")
 	else
 		local multiplier = math.random(1, LottoSettings["SERVER"].mumax)
 		local win = math.random(1, #LottoEntries)
-		print("win:"..win)
-		local Winner = LottoEntries[win].GUIDLow
-		print("winner:"..Winner)
-		local player = (GetPlayerByGUID(LottoEntries[win].GUIDLow))
-		print("playername: "..(GetPlayerByGUID(LottoEntries[win].GUIDLow):GetName()))
-		print(player)
-		print("Player:"..Winner.." has won:"..LottoEntries[win].count * multiplier.." coins.")
-		GetPlayerByGUID(LottoEntries[win].GUIDLow):SendMail("Lotto Winner.", "Contgratulations Winner #"..#LottoHistory..".", 0, GetPlayerByName(LottoEntries[win].name):GetGUIDLow(), 1, 1000, LottoSettings["SERVER"].item, LottoEntries[win].count * multiplier)
+		GetPlayerByGUID(guidlow):SendMail("Lotto Winner.", "Contgratulations Winner #"..#LottoHistory..".", 0, GetPlayerByName(LottoEntries[win].name):GetGUIDLow(), 1, 1000, LottoSettings["SERVER"].item, LottoEntries[win].count * multiplier)
 		SendWorldMessage("Contgratulations to "..LottoEntries[win].name.." our #"..#LottoEntries.." winner.")
 	
 		for a=1, #LottoEntries do
@@ -149,14 +147,22 @@ end
 Lotto(1)
 
 local function LottoOnHello(event, player, unit)
+local lohid = GetId(player:GetGUIDLow())
+	if(lohid==nil)then
+		NewLottoEntry(player:GetGUIDLow(), 0)
+		LottoOnHello(1, player, unit)
+	end
 	VendorRemoveAllItems(npcid)
 	player:GossipClearMenu()
+	player:GossipMenuAddItem(0, "You have entered "..LottoEntries[lohid].count.." times", 0, 10)
 	player:GossipMenuAddItem(0, "Enter the lotto.", 0, 100)
 	player:GossipMenuAddItem(0, "never mind.", 0, 10)
 	player:GossipSendMenu(1, unit)
 end
 
 local function LottoOnSelect(event, player, unit, sender, intid, code)
+	if(intid < 10)then
+	end
 	if(intid==10)then
 		player:GossipComplete()
 	end
@@ -168,15 +174,17 @@ local function LottoOnSelect(event, player, unit, sender, intid, code)
 			local id = GetId(player:GetGUIDLow())
 			player:GossipComplete()
 			player:RemoveItem(LottoSettings["SERVER"].item, 1)
-				if(id)then
-					local count = (LottoEntries[id].count + 1)
-					EnterLotto(player:GetGUIDLow())
-					player:SendBroadcastMessage("You have entered "..count.." times.")
-				else
-					NewLottoEntry(player:GetGUIDLow())
-				end
+
+			if(id)then
+				local count = (LottoEntries[id].count + 1)
+				EnterLotto(player:GetGUIDLow())
+			else
+				NewLottoEntry(player:GetGUIDLow(), 1)
+			end
+			LottoOnHello(1, player)
 		end
 		player:GossipComplete()
+		
 	else
 	LottoOnHello(1, player)
 	end
