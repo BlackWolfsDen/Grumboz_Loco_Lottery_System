@@ -44,22 +44,24 @@ LottoLoader(1)
 
 local function LoadLottoEntriez()
 local LZ = WorldDBQuery("SELECT * FROM lotto.entries WHERE `count`>='1';");
-local lzcount = 0
 	if(LZ)then
 		repeat
 			LottoEntriez[LZ:GetUInt32(0)] = {
-						id = LE:GetUInt32(0),
-						name = LE:GetString(1),
-						count = LE:GetUInt32(2)
-											};
-			lzcount = lzcount + 1
-			
-				if(lzcount>=4)then
-					LottoEntriez["SERVER"] = {1};
-				else
-					LottoEntriez["SERVER"] = {0};
-				end
+				id = LZ:GetUInt32(0),
+				name = LZ:GetString(1),
+				count = LZ:GetUInt32(2)
+							};		
 		until not LZ:NextRow()
+	end
+end
+
+LoadLottoEntriez()
+
+local function GetId(name)
+	for id=1, #LottoEntries do
+		if(LottoEntries[id].name==name)then
+			return id;
+		end
 	end
 end
 
@@ -72,14 +74,6 @@ local function FirstLotto(gametime)
 					initdate = gametime
 						};
 	CreateLuaEvent(Tally, ((LottoHistory[#LottoHistory].initdate+LottoSettings["SERVER"].timer)-GetGameTime()), 1)
-end
-
-local function GetId(name)
-	for id=1, #LottoEntries do
-		if(LottoEntries[id].name==name)then
-			return id;
-		end
-	end
 end
 
 local function EnterLotto(name)
@@ -126,14 +120,20 @@ print(#LottoEntriez)
 	else
 		local multiplier = math.random(1, LottoSettings["SERVER"].mumax)
 		local win = math.random(1, #LottoEntriez)
-		print("win:"..win)
-		local Pplayer = (GetPlayerByName(LottoEntriez[win].name))
-		print(Pplayer)
-		-- :SendMail("Lotto Winner.", "Contgratulations Winner #"..#LottoHistory..".", 0, LottoEntries[win].GUIDLow, 1, 1000, LottoSettings["SERVER"].item, LottoEntries[win].count * multiplier)
-		SendWorldMessage("Contgratulations to "..LottoEntries[win].name.." our #"..#LottoEntries.." winner.")
-	
-		for a=1, #LottoEntries do
-			FlushLotto(a)
+		local name = LottoEntriez[win].name
+			if(name)then
+				if(GetPlayerByName(name))then
+					local player = GetPlayerByName(name)
+					print(player)
+					SendWorldMessage("Contgratulations to "..LottoEntries[win].name.." our #"..#LottoHistory.." winner.")
+					player:AddItem(LottoSettings["SERVER"].item, (LottoEntries[win].count * multiplier))
+				
+					for a=1, #LottoEntries do
+						FlushLotto(a)
+					end
+				else
+					Tally(1)
+			end
 		end
 	end
 
@@ -142,6 +142,7 @@ print(#LottoEntriez)
 	if(LottoSettings["SERVER"].operation==1)then
 		CreateLuaEvent(Tally, ((LottoHistory[#LottoHistory].initdate+LottoSettings["SERVER"].timer)-GetGameTime()), 1)
 	end
+LoadLottoEntriez()
 end
 
 function Lotto(event)
