@@ -31,24 +31,34 @@ local LH = WorldDBQuery("SELECT * FROM lotto.history;");
 	end
 	
 local LE = WorldDBQuery("SELECT * FROM lotto.entries;");
+--local lecount = 0
 	if(LE) then
+	
 		repeat
 			LottoEntries[LE:GetUInt32(0)] = {
 				id = LE:GetUInt32(0),
-				name = LE:GetString(1),
+				GUIDLow = LE:GetUInt32(1),
 				count = LE:GetUInt32(2)
 							};
 		until not LE:NextRow()
 	end
-
+local LZ = WorldDBQuery("SELECT * FROM lotto.entries WHERE `count`>='1';");
+local lzcount = 0
+	repeat
+		lzcount = lzcount + 1
+			if(lzcount>=4)then
+				LottoEntriez["SERVER"] = {1};
+			else
+				LottoEntriez["SERVER"] = {0};
+			end
+	until not LZ:NextRow()
 end
 
 LottoLoader(1)
 
 local function FirstLotto(gametime)
 	local NLID = (1)
-	WorldDBQuery("INSERT INTO lotto.history SET `id` = '"..NLID.."';")
-	WorldDBQuery("UPDATE lotto.history SET `start` = '"..gametime.."' WHERE `id` = '"..NLID.."';")
+	WorldDBQuery("INSERT INTO lotto.history SET `start` = '"..gametime.."';") --  WHERE `id` = '"..NLID.."';")
 
 	LottoHistory[NLID] = {
 					id = NLID,
@@ -57,60 +67,39 @@ local function FirstLotto(gametime)
 	CreateLuaEvent(Tally, ((LottoHistory[#LottoHistory].initdate+LottoSettings["SERVER"].timer)-GetGameTime()), 1)
 end
 
-local function GetEntries()
-local LZ = WorldDBQuery("SELECT * FROM lotto.entries WHERE `count`>='1';");
-	local count = 0
-
-	if(LZ) then
-	
-		repeat
-		count = count + 1
-			if(count>=2)then
-				LottoEntriez["SERVER"] = {1};
-			else
-				LottoEntriez["SERVER"] = {0};
-			end
-		until not LZ:NextRow()
-	return count;
-	end	
-end
-
-GetEntries()
-
-local function GetId(name)
+local function GetId(guidlow)
 	for id=1, #LottoEntries do
-		if(LottoEntries[id].name==player:GetName())then
+		if(LottoEntries[id].GUIDLow==guidlow)then
 			return id;
 		end
 	end
 end
 
-local function LottoEntry(playername)
-local count = LottoEntries[GetId(playername)].count + 1
-	WorldDBQuery("UPDATE lotto.entries SET `count` = '"..count.."' WHERE `name` = '"..playername.."';")
-	LottoEntries[GetId(playername)].count = count
+local function EnterLotto(guidlow)
+local count = LottoEntries[GetId(guidlow)].count + 1
+	WorldDBQuery("UPDATE lotto.entries SET `count` = '"..count.."' WHERE `guidlow` = '"..guidlow.."';")
+	LottoEntries[guidlow].count = count
 end
 
-local function NewLottoEntry(name)
+local function NewLottoEntry(guidlow)
 local NLEID = (#LottoEntries+1)
-	WorldDBQuery("INSERT INTO lotto.entries SET `name` = '"..name.."';")
+	WorldDBQuery("INSERT INTO lotto.entries SET `guidlow` = '"..guidlow.."';")
 	LottoEntries[NLEID] = {
 				id = NLEID,
-				name = name,
+				GUIDLow = guidlow,
 				count = 0
 						};
-	LottoEntry(name)
+	EnterLotto(guidlow)
 end
 
-local function LottoUpdate(id)
-	WorldDBQuery("UPDATE lotto.entries SET `count` = '0' WHERE `id` = "..id..";")
+local function FlushLotto(id)
+	WorldDBQuery("UPDATE lotto.entries SET `count` = '0' WHERE `id` = '"..id.."';")
 	LottoEntries[id].count = 0
 end
 
-local function NewLotto(gametime)
+local function LottoStart(gametime)
 local id = (#LottoHistory + 1)
-	WorldDBQuery("INSERT INTO lotto.history SET `id` = '"..id.."';");
-	WorldDBQuery("UPDATE lotto.history SET `start` = "..gametime.." WHERE `id` = "..id..";")
+	WorldDBQuery("UPDATE lotto.history SET `start` = '"..gametime.."';") --  WHERE `id` = "..id..";")
 	LottoHistory[id] = {
 			initdate = gametime
 						};
@@ -123,29 +112,26 @@ print(#LottoEntries)
 		print("No Lotto Entries")
 	else
 		local multiplier = math.random(1, LottoSettings["SERVER"].mumax)
-		local win = math.random(1, GetEntries())
+		local win = math.random(1, #LottoEntries)
 		print("win:"..win)
-		local Winner = LottoEntries[win].name
+		local Winner = LottoEntries[win].GUIDLow
 		print("winner:"..Winner)
---		local player = GetPlayerByName(Winner):GetName()
---		print(GetPlayerByName(Winner):GetName())
-		local player = (GetPlayerByName(LottoEntries[win].name))
-		print("playername: "..GetPlayerByName(LottoEntries[win].name))
+		local player = (GetPlayerByGUID(LottoEntries[win].GUIDLow))
+		print("playername: "..(GetPlayerByGUID(LottoEntries[win].GUIDLow):GetName()))
 		print(player)
 		print("Player:"..Winner.." has won:"..LottoEntries[win].count * multiplier.." coins.")
-		GetPlayerByName(LottoEntries[win].name):SendMail("Lotto Winner.", "Contgratulations Winner #"..#LottoHistory..".", 0, GetPlayerByName(LottoEntries[win].name):GetGUIDLow(), 1, 1000, LottoSettings["SERVER"].item, LottoEntries[win].count * multiplier)
+		GetPlayerByGUID(LottoEntries[win].GUIDLow):SendMail("Lotto Winner.", "Contgratulations Winner #"..#LottoHistory..".", 0, GetPlayerByName(LottoEntries[win].name):GetGUIDLow(), 1, 1000, LottoSettings["SERVER"].item, LottoEntries[win].count * multiplier)
 		SendWorldMessage("Contgratulations to "..LottoEntries[win].name.." our #"..#LottoEntries.." winner.")
 	
 		for a=1, #LottoEntries do
-			LottoUpdate(a)
+			FlushLotto(a)
 		end
 	end
 
-	NewLotto(GetGameTime())
+	LottoStart(GetGameTime())
 
 	if(LottoSettings["SERVER"].operation==1)then
 		CreateLuaEvent(Tally, ((LottoHistory[#LottoHistory].initdate+LottoSettings["SERVER"].timer)-GetGameTime()), 1)
-		print("Grumbo'z Goliath Online")
 	end
 end
 
@@ -156,12 +142,9 @@ function Lotto(event)
 			FirstLotto(GetGameTime())
 		else
 			CreateLuaEvent(Tally, LottoSettings["SERVER"].timer, 1)
-			print("Grumbo'z Goliath Online")
 		end
 	end	
 end
-
-RegisterServerEvent(16, Lotto)
 
 Lotto(1)
 
@@ -179,18 +162,18 @@ local function LottoOnSelect(event, player, unit, sender, intid, code)
 	end
 
 	if(intid==100)then
-	local id = GetId(player:GetName())
 		if(player:GetItemCount(LottoSettings["SERVER"].item)==0)then
 			player:SendBroadcastMessage("You dont have enough currency to enter.")
 		else
+			local id = GetId(player:GetGUIDLow())
 			player:GossipComplete()
 			player:RemoveItem(LottoSettings["SERVER"].item, 1)
-				if(id~=nil)then
+				if(id)then
 					local count = (LottoEntries[id].count + 1)
-					LottoEntry(player:GetName())
+					EnterLotto(player:GetGUIDLow())
 					player:SendBroadcastMessage("You have entered "..count.." times.")
 				else
-					NewLottoEntry(player:GetName())
+					NewLottoEntry(player:GetGUIDLow())
 				end
 		end
 		player:GossipComplete()
@@ -201,3 +184,5 @@ end
 
 RegisterCreatureGossipEvent(npcid, 1, LottoOnHello)
 RegisterCreatureGossipEvent(npcid, 2, LottoOnSelect)
+
+print("Grumbo'z Goliath Online")
