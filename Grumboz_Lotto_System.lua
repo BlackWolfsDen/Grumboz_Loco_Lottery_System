@@ -37,7 +37,7 @@ local LE = WorldDBQuery("SELECT * FROM lotto.entries;");
 		repeat
 			LottoEntries[LE:GetUInt32(0)] = {
 				id = LE:GetUInt32(0),
-				GUIDLow = LE:GetUInt32(1),
+				GUIDLow = LE:GetUInt64(1),
 				count = LE:GetUInt32(2)
 							};
 		until not LE:NextRow()
@@ -118,7 +118,8 @@ print(#LottoEntries)
 	else
 		local multiplier = math.random(1, LottoSettings["SERVER"].mumax)
 		local win = math.random(1, #LottoEntries)
-		GetPlayerByGUID(guidlow):SendMail("Lotto Winner.", "Contgratulations Winner #"..#LottoHistory..".", 0, GetPlayerByName(LottoEntries[win].name):GetGUIDLow(), 1, 1000, LottoSettings["SERVER"].item, LottoEntries[win].count * multiplier)
+		print("win:"..win)
+		GetPlayerByGUID(LottoEntries[win].GUIDLow):SendMail("Lotto Winner.", "Contgratulations Winner #"..#LottoHistory..".", 0, LottoEntries[win].GUIDLow, 1, 1000, LottoSettings["SERVER"].item, LottoEntries[win].count * multiplier)
 		SendWorldMessage("Contgratulations to "..LottoEntries[win].name.." our #"..#LottoEntries.." winner.")
 	
 		for a=1, #LottoEntries do
