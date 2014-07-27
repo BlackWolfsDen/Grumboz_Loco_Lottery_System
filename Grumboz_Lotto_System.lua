@@ -51,9 +51,7 @@ local LZ = WorldDBQuery("SELECT * FROM lotto.entries WHERE `count`>='1';");
 				name = LZ:GetString(1),
 				count = LZ:GetUInt32(2)
 							};
-		print(LottoEntriez[LZ:GetUInt32(0)].id)		
 		until not LZ:NextRow()
-		print(#LottoEntriez)
 	end
 end
 
@@ -143,7 +141,9 @@ print(#LottoEntriez)
 	else
 		local multiplier = math.random(1, LottoSettings["SERVER"].mumax)
 		local win = math.random(1, #LottoEntriez)
-		local player = GetPlayerByName(LottoEntriez[win].name)
+		print("win:"..win)
+		local name = LottoEntriez[win].name
+		local player = GetPlayerByName(name)
 
 			if(player)then
 				print(player)
