@@ -116,7 +116,6 @@ local function FirstLotto(event, gametime)
 end
 
 local function LottoStart(event, gametime)
-print("LottoStart")
 	if(event==(0 or nil))then
 	else
 		local lhid = (#LottoHistory + 1)
@@ -141,9 +140,7 @@ end
 
 local function Tally(event)
 LoadLottoEntriez()
-print("pause.")
 print("tally")
-print(#LottoEntriez)
 	if(#LottoEntriez < 4)then
 		SendWorldMessage("Not enough Lotto Entries.")
 	else
