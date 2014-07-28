@@ -19,28 +19,14 @@ USE `lotto`;
 CREATE TABLE IF NOT EXISTS `entries` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
-  `count` int(11) unsigned NOT NULL DEFAULT '0',
+  `count` bigint(20) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 
 -- Dumping data for table lotto.entries: ~5 rows (approximately)
 /*!40000 ALTER TABLE `entries` DISABLE KEYS */;
-/*!40000 ALTER TABLE `entries` ENABLE KEYS */;
-
-
--- Dumping structure for table lotto.history
-CREATE TABLE IF NOT EXISTS `history` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `start` bigint(20) unsigned DEFAULT NULL,
-  `winner` varchar(50) NOT NULL,
-  `amount` int(11) DEFAULT NULL,
-  `entries` int(11) DEFAULT '0',
-  KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=387 DEFAULT CHARSET=latin1;
-
--- Dumping data for table lotto.history: ~9 rows (approximately)
-/*!40000 ALTER TABLE `history` DISABLE KEYS */;
-/*!40000 ALTER TABLE `history` ENABLE KEYS */;
+REPLACE INTO `entries` (`id`, `name`, `count`) VALUES
+*!40000 ALTER TABLE `entries` ENABLE KEYS */;
 
 
 -- Dumping structure for table lotto.settings
@@ -57,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
 -- Dumping data for table lotto.settings: ~1 rows (approximately)
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
 REPLACE INTO `settings` (`id`, `item`, `timer`, `operation`, `mumax`, `comments`) VALUES
-	(1, 44209, 1800000, 1, 10, 'item :\r\nthe item id for what they will win(custom currency)\r\n\r\ntimer :\r\n604800000 == 1 week\r\n86400000 == 1 day\r\n3600000 == 1 hour\r\n60000 == 1 minute');
+	(1, 44209, 30000, 1, 10, 'item :\r\nthe item id for what they will win(custom currency)\r\n\r\ntimer :\r\n604800000 == 1 week\r\n86400000 == 1 day\r\n3600000 == 1 hour\r\n60000 == 1 minute');
 /*!40000 ALTER TABLE `settings` ENABLE KEYS */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
