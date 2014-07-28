@@ -100,7 +100,6 @@ local function FirstLotto(event, gametime)
 		local nlid = (1)
 		WorldDBQuery("INSERT INTO lotto.history SET `id` = '"..nlid.."';")
 		WorldDBQuery("UPDATE lotto.history SET `start` = '"..gametime.."' WHERE `id` = '"..nlid.."';")
-		CreateLuaEvent(Tally, LottoSettings["SERVER"].timer, 1)
 		LottoHistory[nlid] = {
 					id = nlid,
 					initdate = gametime
@@ -126,6 +125,7 @@ local function Lotto()
 	if(LottoSettings["SERVER"].operation==1)then
 		if(#LottoHistory < 1)then
 			FirstLotto(1, GetGameTime())
+			CreateLuaEvent(Tally, LottoSettings["SERVER"].timer, 1)
 		else
 			LottoStart(1, GetGameTime())
 		end
@@ -133,14 +133,12 @@ local function Lotto()
 end
 
 local function Tally(event)
-local c = nil
-local pot = 0	
 LoadLottoEntriez()
+print("pause.")
 print("tally")
 print(#LottoEntriez)
 	if(#LottoEntriez < 4)then
-		print("Not enough Lotto Entries")
-		SendWorldMessage("No Winners this lotto round.")
+		SendWorldMessage("Not enough Lotto Entries.")
 	else
 		local multiplier = math.random(1, LottoSettings["SERVER"].mumax)
 		local win = math.random(1, 1) -- #LottoEntriez)
@@ -150,13 +148,13 @@ print(#LottoEntriez)
 		local player = GetPlayerByName(name)
 
 			if(player)then
+				local pot = {};
 				print(player)
-				for r=1, #LottoEntriez do
-					local c = c + (LottoEntriez[r].count)
-					print(c)
-					local pot = (pot+c)
+				for r=1, #LottoEntries do
+					local pot[1] = {pot[1]+(LottoEntries[r].count)}
+					
 				end
-				print(pot)
+				print("pot:"..pot[1])
 				local bet = ((LottoEntriez[win].count)*multiplier)
 				print(bet)
 				SendWorldMessage("Contgratulations to "..LottoEntriez[win].name.." our #"..#LottoHistory.." winner.")
@@ -165,6 +163,7 @@ print(#LottoEntriez)
 				for a=1, #LottoEntries do
 					FlushLotto(a)
 				end
+			LoadLottoEntriez()
 			else
 				SendWorldMessage("No Winners this lotto round.")
 			end
@@ -205,7 +204,6 @@ local function LottoOnSelect(event, player, unit, sender, intid, code)
 		else
 			local id = GetId(player:GetName())
 			player:RemoveItem(LottoSettings["SERVER"].item, 1)
-
 			if(id)then
 				local count = (LottoEntries[id].count + 1)
 				EnterLotto(player:GetName())
