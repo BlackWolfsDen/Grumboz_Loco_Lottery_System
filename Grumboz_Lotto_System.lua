@@ -148,15 +148,18 @@ print(#LottoEntriez)
 		local player = GetPlayerByName(name)
 
 			if(player)then
-				local pot = {};
+				local pot = 0
 				print(player)
 				for r=1, #LottoEntries do
-					local pot[1] = {pot[1]+(LottoEntries[r].count)}
-					
+					if(LottoEntries[r].count > 0)then
+						print(r)
+						local pot = pot+(LottoEntries[r].count)
+					end				
 				end
-				print("pot:"..pot[1])
+				print("pot:"..pot)
 				local bet = ((LottoEntriez[win].count)*multiplier)
 				print(bet)
+				
 				SendWorldMessage("Contgratulations to "..LottoEntriez[win].name.." our #"..#LottoHistory.." winner.")
 				player:AddItem(LottoSettings["SERVER"].item, (pot+bet))
 			
