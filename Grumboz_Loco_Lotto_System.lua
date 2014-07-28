@@ -5,8 +5,8 @@ LottoEntries = {};
 LottoEntriez = {};
 LottoHistory = {};
 LottoEntries["SERVER"] = {
-					pot = 0
-						};
+		pot = 0
+			};
 local function LottoLoader(event)
 local LS = WorldDBQuery("SELECT * FROM lotto.settings;");
 	if(LS)then
@@ -16,7 +16,7 @@ local LS = WorldDBQuery("SELECT * FROM lotto.settings;");
 				timer = LS:GetUInt32(2),
 				operation = LS:GetUInt32(3),
 				mumax = LS:GetUInt32(4) -- max for winnings random multiplier
-									};
+										};
 		until not LS:NextRow()
 	end	
 local LH = WorldDBQuery("SELECT * FROM lotto.history;");
@@ -27,7 +27,7 @@ local LH = WorldDBQuery("SELECT * FROM lotto.history;");
 				initdate = LH:GetUInt32(1),
 				winner = LH:GetString(2),
 				amount = LH:GetUInt32(3)
-							};
+											};
 		until not LH:NextRow()
 	end
 local LE = WorldDBQuery("SELECT * FROM lotto.entries;");
@@ -37,7 +37,7 @@ local LE = WorldDBQuery("SELECT * FROM lotto.entries;");
 				id = LE:GetUInt32(0),
 				name = LE:GetString(1),
 				count = LE:GetUInt32(2)
-							};
+											};
 			count = ((LottoEntries["SERVER"].pot)+(LE:GetUInt32(2)))				
 			LottoEntries["SERVER"].pot = count
 		until not LE:NextRow()
@@ -56,7 +56,7 @@ local LZ = WorldDBQuery("SELECT * FROM lotto.entries WHERE `count`>='1';");
 				id = LZ:GetUInt32(0),
 				name = LZ:GetString(1),
 				count = LZ:GetUInt32(2)
-							};
+											};
 			LottoEntries["SERVER"].pot = ((LottoEntries["SERVER"].pot)+(LZ:GetUInt32(2)))				
 		until not LZ:NextRow()
 	end
@@ -98,7 +98,6 @@ end
 local function FlushLotto(id)
 	WorldDBQuery("UPDATE lotto.entries SET `count` = '0' WHERE `id` = '"..id.."';")
 	LottoEntries[id].count = 0
-	print("Flush:"..id)
 end
 
 local function FirstLotto(event, gametime)
@@ -111,7 +110,7 @@ local function FirstLotto(event, gametime)
 					id = nlid,
 					initdate = gametime
 							};
-		print("First Lotto Registered.")
+		print("First Loco Lotto Started.")
 	end
 end
 
@@ -123,7 +122,7 @@ local function LottoStart(event, gametime)
 		LottoHistory[lhid] = {
 			initdate = gametime
 							};
-		print("New Lotto Registered.")
+		print("New Loco Lotto Started.")
 	end
 end
 
@@ -142,7 +141,7 @@ local function Tally(event)
 LoadLottoEntriez()
 print("tally")
 	if(#LottoEntriez < 4)then
-		SendWorldMessage("Not enough Lotto Entries.")
+		SendWorldMessage("Not enough Loco Lotto Entries.")
 	else
 		local multiplier = math.random(1, LottoSettings["SERVER"].mumax)
 		local win = math.random(1, 1) -- #LottoEntriez)
@@ -151,7 +150,7 @@ print("tally")
 
 			if(player)then
 				local bet = ((LottoEntriez[win].count)*multiplier)
-				SendWorldMessage("Contgratulations to "..LottoEntriez[win].name.." our #"..#LottoHistory.." winner. Total:"..(LottoEntries["SERVER"].pot+bet)..".")
+				SendWorldMessage("Contgratulations to "..LottoEntriez[win].name.." our #"..#LottoHistory.." winner. Total:"..(LottoEntries["SERVER"].pot+bet)..". Its LOCO!!")
 				player:AddItem(LottoSettings["SERVER"].item, (LottoEntries["SERVER"].pot+bet))
 			
 				for a=1, #LottoEntries do
@@ -159,7 +158,7 @@ print("tally")
 				end
 			LottoEntries["SERVER"] = {0};
 			else
-				SendWorldMessage("No Winners this lotto round.")
+				SendWorldMessage("No Winners this Loco lotto round.")
 			end
 	end
 	if(LottoSettings["SERVER"].operation==1)then
@@ -194,7 +193,7 @@ local function LottoOnSelect(event, player, unit, sender, intid, code)
 
 	if(intid==100)then
 		if(player:GetItemCount(LottoSettings["SERVER"].item)==0)then
-			player:SendBroadcastMessage("You dont have enough currency to enter.")
+			player:SendBroadcastMessage("You Loco .. you dont have enough currency to enter.")
 		else
 			local id = GetId(player:GetName())
 			player:RemoveItem(LottoSettings["SERVER"].item, 1)
@@ -212,8 +211,9 @@ end
 RegisterCreatureGossipEvent(npcid, 1, LottoOnHello)
 RegisterCreatureGossipEvent(npcid, 2, LottoOnSelect)
 
-print("Grumbo'z Loco Lottery Online")
+print("Grumbo'z Loco Lottery Online.")
 
-CreateLuaEvent(Tally, LottoSettings["SERVER"].timer, 1)
-Lotto(1)
-
+if(LottoSettings["SERVER"].operation==1)then
+	CreateLuaEvent(Tally, LottoSettings["SERVER"].timer, 1)
+	Lotto(1)
+end
