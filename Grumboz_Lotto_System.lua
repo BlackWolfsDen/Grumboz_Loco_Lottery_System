@@ -48,6 +48,7 @@ LottoLoader(1)
 
 local function LoadLottoEntriez()
 LottoEntriez = {};
+LottoEntries["SERVER"].pot = 0
 local LZ = WorldDBQuery("SELECT * FROM lotto.entries WHERE `count`>='1';");
 	if(LZ)then
 		repeat
@@ -56,6 +57,7 @@ local LZ = WorldDBQuery("SELECT * FROM lotto.entries WHERE `count`>='1';");
 				name = LZ:GetString(1),
 				count = LZ:GetUInt32(2)
 							};
+			LottoEntries["SERVER"].pot = ((LottoEntries["SERVER"].pot)+(LZ:GetUInt32(2)))				
 		until not LZ:NextRow()
 	end
 end
@@ -147,26 +149,18 @@ print(#LottoEntriez)
 	else
 		local multiplier = math.random(1, LottoSettings["SERVER"].mumax)
 		local win = math.random(1, 1) -- #LottoEntriez)
-		print("multi:"..multiplier)
-		print("win:"..win)
 		local name = LottoEntriez[win].name
 		local player = GetPlayerByName(name)
 
 			if(player)then
-				local pot = 0
-				print(player)
-				print("pot:"..LottoEntries["SERVER"].pot)
 				local bet = ((LottoEntriez[win].count)*multiplier)
-				print(bet)
-				
-				SendWorldMessage("Contgratulations to "..LottoEntriez[win].name.." our #"..#LottoHistory.." winner.")
+				SendWorldMessage("Contgratulations to "..LottoEntriez[win].name.." our #"..#LottoHistory.." winner. Total:"..(LottoEntries["SERVER"].pot+bet)..".")
 				player:AddItem(LottoSettings["SERVER"].item, (LottoEntries["SERVER"].pot+bet))
 			
 				for a=1, #LottoEntries do
 					FlushLotto(a)
 				end
 			LottoEntries["SERVER"] = {0};
-			LoadLottoEntriez()
 			else
 				SendWorldMessage("No Winners this lotto round.")
 			end
@@ -221,7 +215,7 @@ end
 RegisterCreatureGossipEvent(npcid, 1, LottoOnHello)
 RegisterCreatureGossipEvent(npcid, 2, LottoOnSelect)
 
-print("Grumbo'z Goliath Online")
+print("Grumbo'z Loco Lottery Online")
 
 CreateLuaEvent(Tally, LottoSettings["SERVER"].timer, 1)
 Lotto(1)
