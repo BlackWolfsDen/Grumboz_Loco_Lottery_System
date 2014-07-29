@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `entries` (
 -- Dumping data for table lotto.entries: ~5 rows (approximately)
 /*!40000 ALTER TABLE `entries` DISABLE KEYS */;
 REPLACE INTO `entries` (`id`, `name`, `count`) VALUES
-*!40000 ALTER TABLE `entries` ENABLE KEYS */;
+/*!40000 ALTER TABLE `entries` ENABLE KEYS */;
 
 
 -- Dumping structure for table lotto.settings
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
 -- Dumping data for table lotto.settings: ~1 rows (approximately)
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
 REPLACE INTO `settings` (`id`, `item`, `timer`, `operation`, `mumax`, `comments`) VALUES
-	(1, 44209, 30000, 1, 10, 'item :\r\nthe item id for what they will win(custom currency)\r\n\r\ntimer :\r\n604800000 == 1 week\r\n86400000 == 1 day\r\n3600000 == 1 hour\r\n60000 == 1 minute');
+	(1, 44209, 1800000, 1, 10, 'item :\r\nthe item id for what they will win(custom currency)\r\n\r\ntimer :\r\n604800000 == 1 week\r\n86400000 == 1 day\r\n3600000 == 1 hour\r\n60000 == 1 minute');
 /*!40000 ALTER TABLE `settings` ENABLE KEYS */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
