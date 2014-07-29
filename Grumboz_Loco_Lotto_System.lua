@@ -41,20 +41,6 @@ end
 LottoLoader(1)
 
 local function UpdateLottoEntriez()
-LottoEntriez = {};
-LottoEntriez["SERVER"] = {
-				pot = 0
-						};
-	for a=1, #LottoEntries do
-		if(LottoEntries[a].count > 0)then
-			LottoEntriez[(#LottoEntriez+1)] = {
-								id = LottoEntries[a].id,
-								name = LottoEntries[a].name,
-								count = LottoEntries[a].count
-											};
-			LottoEntriez["SERVER"].pot = ((LottoEntriez["SERVER"].pot)+(LottoEntries[a].count))
-		end
-	end
 end
 
 local function GetId(name)
@@ -95,17 +81,32 @@ end
 
 local function FlushLotto(id)
 	WorldDBQuery("UPDATE lotto.entries SET `count` = '0' WHERE `id` = '"..id.."';")
-	LottoEntriez[id].count = 0
+	LottoEntries[id].count = 0
+	
 end
 
 local function Tally(event)
 UpdateLottoEntriez()
+LottoEntriez = {};
+LottoEntriez["SERVER"] = {
+				pot = 0
+						};
+	for a=1, #LottoEntries do
+		if(LottoEntries[a].count > 0)then
+			LottoEntriez[(#LottoEntriez+1)] = {
+								id = LottoEntries[a].id,
+								name = LottoEntries[a].name,
+								count = LottoEntries[a].count
+											};
+			LottoEntriez["SERVER"].pot = ((LottoEntriez["SERVER"].pot)+(LottoEntries[a].count))
+		end
+	end
 print("tally")
 	if(#LottoEntriez < 4)then
 		SendWorldMessage("Not enough Loco Lotto Entries this round.")
 	else
 		local multiplier = math.random(1, LottoSettings["SERVER"].mumax)
-		local win = math.random(1, #LottoEntriez)
+		local win = math.random(1, 1) -- #LottoEntriez)
 		local name = LottoEntriez[win].name
 		local player = GetPlayerByName(name)
 
@@ -116,8 +117,10 @@ print("tally")
 			
 				for a=1, #LottoEntries do
 					FlushLotto(a)
-					LottoEntriez["SERVER"].pot = 0	
 				end
+				LottoEntriez = {};
+				LottoEntriez["SERVER"] = {};
+				LottoEntriez["SERVER"].pot = 0	
 			else
 				SendWorldMessage("No Winners this Loco lotto round.")
 			end
