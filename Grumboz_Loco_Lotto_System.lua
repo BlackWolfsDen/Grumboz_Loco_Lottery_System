@@ -1,8 +1,9 @@
+print("\n-----------------------------------")
+print("Grumbo\'z Loco Lotto starting ...\n")
 local npcid = 390000
+Lotto = {};
 LottoSettings = {};
 LottoEntries = {};
-LottoEntriez = {};
-LottoEntriez["SERVER"] = {};
 
 local function LottoLoader(event)
 local LS = WorldDBQuery("SELECT * FROM lotto.settings;");
@@ -18,7 +19,6 @@ local LS = WorldDBQuery("SELECT * FROM lotto.settings;");
 	end	
 	
 local LE = WorldDBQuery("SELECT * FROM lotto.entries;");
-LottoEntriez["SERVER"].pot = 0;
 	if(LE)then
 		repeat
 			LottoEntries[LE:GetUInt32(0)] = {
@@ -26,20 +26,17 @@ LottoEntriez["SERVER"].pot = 0;
 								name = LE:GetString(1),
 								count = LE:GetUInt32(2)
 											};
-			if(LE:GetUInt32(2) > 0)then
-				LottoEntriez[(#LottoEntriez+1)] = {
-									id = LE:GetUInt32(0),
-									name = LE:GetString(1),
-									count = LE:GetUInt32(2)
-												};
-				LottoEntriez["SERVER"].pot = ((LottoEntriez["SERVER"].pot)+(LE:GetUInt32(2)))
-			end
 		until not LE:NextRow()
 	end
 end
 
 LottoLoader(1)
 
+local function GetEntries()
+end
+ 
+ GetEntries()
+ 
 local function GetId(name)
 	for id=1, #LottoEntries do
 		if(LottoEntries[id].name==name)then
@@ -55,45 +52,44 @@ WorldDBExecute("REPLACE INTO lotto.entries SET `name`='"..name.."';")
 
 LottoEntries[NLEID] = {
 			id = NLEID,
-			name = name
-					};
-LottoEntriez[NLEID] = {
-			id = NLEID,
 			name = name,
 			count = 0
 					};
 end
 
 local function EnterLotto(name, id)
-	local elcount = LottoEntriez[id].count + 1
+	local elcount = LottoEntries[id].count + 1
 	WorldDBQuery("UPDATE lotto.entries SET `count` = '"..elcount.."' WHERE `name` = '"..name.."';")
 	LottoEntries[id].count = elcount
-	LottoEntriez[id].count = elcount
 	GetPlayerByName(name):SendBroadcastMessage("You have entered "..elcount.." times.")
-	LottoEntriez["SERVER"].pot = ((LottoEntriez["SERVER"].pot)+(elcount))
 end
 
 local function FlushLotto(id)
 	WorldDBQuery("UPDATE lotto.entries SET `count` = '0' WHERE `id` = '"..id.."';")
 	LottoEntries[id].count = 0
+
 end
 
 local function Tally(event)
 LottoEntriez = {};
-LottoEntriez["SERVER"] = {
-				pot = 0
-						};
+Lotto["SERVER"] = {
+			pot = 0
+					};
+					
 	for a=1, #LottoEntries do
+	
 		if(LottoEntries[a].count > 0)then
 			LottoEntriez[(#LottoEntriez+1)] = {
 								id = LottoEntries[a].id,
 								name = LottoEntries[a].name,
 								count = LottoEntries[a].count
 											};
-			LottoEntriez["SERVER"].pot = ((LottoEntriez["SERVER"].pot)+(LottoEntries[a].count))
+			Lotto["SERVER"].pot = ((Lotto["SERVER"].pot)+(LottoEntries[a].count))
 		end
 	end
+	
 print("tally")
+
 	if(#LottoEntriez < 4)then
 		SendWorldMessage("Not enough Loco Lotto Entries this round.")
 	else
@@ -101,21 +97,20 @@ print("tally")
 		local win = math.random(1, #LottoEntriez)
 		local name = LottoEntriez[win].name
 		local player = GetPlayerByName(name)
+		
 			if(player)then
 				local bet = ((LottoEntriez[win].count)*multiplier)
-				SendWorldMessage("Contgratulations to "..LottoEntriez[win].name.." our new winner. Total:"..(LottoEntriez["SERVER"].pot+bet)..". Its LOCO!!")
-				player:AddItem(LottoSettings["SERVER"].item, (LottoEntriez["SERVER"].pot+bet))
+				SendWorldMessage("Contgratulations to "..LottoEntriez[win].name.." our new winner. Total:"..(Lotto["SERVER"].pot+bet)..". Its LOCO!!")
+				player:AddItem(LottoSettings["SERVER"].item, (Lotto["SERVER"].pot+bet))
 			
 				for a=1, #LottoEntries do
 					FlushLotto(a)
 				end
-				LottoEntriez = {};
-				LottoEntriez["SERVER"] = {};
-				LottoEntriez["SERVER"].pot = 0	
 			else
 				SendWorldMessage("No Winners this Loco lotto round.")
 			end
 	end
+	
 	if(LottoSettings["SERVER"].operation==1)then
 		CreateLuaEvent(Tally, LottoSettings["SERVER"].timer, 1)
 	end
@@ -123,6 +118,7 @@ end
 
 local function LottoOnHello(event, player, unit)
 local lohid = GetId(player:GetName())
+
 	if(lohid==nil)then
 		NewLottoEntry(player:GetName(), 0)
 		LottoOnHello(event, player, unit)
@@ -137,9 +133,11 @@ local lohid = GetId(player:GetName())
 end
 
 local function LottoOnSelect(event, player, unit, sender, intid, code)
+
 	if(intid<=10)then
 		LottoOnHello(1, player, unit)
 	end
+	
 	if(intid==11)then
 		player:GossipComplete()
 	end
@@ -160,11 +158,12 @@ end
 RegisterCreatureGossipEvent(npcid, 1, LottoOnHello)
 RegisterCreatureGossipEvent(npcid, 2, LottoOnSelect)
 
-print("Grumbo'z Loco Lottery Online.")
+print("Grumbo'z Loco Lotto Operational.")
 
 	if(LottoSettings["SERVER"].operation==1)then
 		CreateLuaEvent(Tally, LottoSettings["SERVER"].timer, 1)
+		print("...Lotto Started...")
 	else
 		print("...System idle...")
 	end
-
+print("-----------------------------------\n")
