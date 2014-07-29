@@ -93,7 +93,7 @@ print("tally")
 
 			if(player)then
 				local bet = ((LottoEntriez[win].count)*multiplier)
-				SendWorldMessage("Contgratulations to "..LottoEntriez[win].name.." our new winner. Total:"..(LottoEntries["SERVER"].pot+bet)..". Its LOCO!!")
+				SendWorldMessage("Contgratulations to "..LottoEntriez[win].name.." our new winner. Total:"..(LottoEntriez["SERVER"].pot+bet)..". Its LOCO!!")
 				player:AddItem(LottoSettings["SERVER"].item, (LottoEntries["SERVER"].pot+bet))
 			
 				for a=1, #LottoEntries do
