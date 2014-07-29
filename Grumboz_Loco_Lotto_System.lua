@@ -3,6 +3,7 @@ LottoSettings = {};
 LottoEntries = {};
 LottoEntriez = {};
 LottoEntriez["SERVER"] = {};
+
 local function LottoLoader(event)
 local LS = WorldDBQuery("SELECT * FROM lotto.settings;");
 	if(LS)then
@@ -40,9 +41,6 @@ end
 
 LottoLoader(1)
 
-local function UpdateLottoEntriez()
-end
-
 local function GetId(name)
 	for id=1, #LottoEntries do
 		if(LottoEntries[id].name==name)then
@@ -68,9 +66,7 @@ LottoEntriez[NLEID] = {
 end
 
 local function EnterLotto(name, id)
-
-local elcount = LottoEntriez[id].count + 1
-	
+	local elcount = LottoEntriez[id].count + 1
 	WorldDBQuery("UPDATE lotto.entries SET `count` = '"..elcount.."' WHERE `name` = '"..name.."';")
 	LottoEntries[id].count = elcount
 	LottoEntriez[id].count = elcount
@@ -86,7 +82,6 @@ local function FlushLotto(id)
 end
 
 local function Tally(event)
-UpdateLottoEntriez()
 LottoEntriez = {};
 LottoEntriez["SERVER"] = {
 				pot = 0
@@ -109,7 +104,6 @@ print("tally")
 		local win = math.random(1, #LottoEntriez)
 		local name = LottoEntriez[win].name
 		local player = GetPlayerByName(name)
-
 			if(player)then
 				local bet = ((LottoEntriez[win].count)*multiplier)
 				SendWorldMessage("Contgratulations to "..LottoEntriez[win].name.." our new winner. Total:"..(LottoEntriez["SERVER"].pot+bet)..". Its LOCO!!")
@@ -155,13 +149,14 @@ local function LottoOnSelect(event, player, unit, sender, intid, code)
 
 	if(intid==100)then
 		local id = GetId(player:GetName())
-		
-			if(player:GetItemCount(LottoSettings["SERVER"].item)==0)then
-				player:SendBroadcastMessage("You Loco .. you dont have enough currency to enter.")
-			else
-				EnterLotto(player:GetName(), id)
+			if(id)then
+				if(player:GetItemCount(LottoSettings["SERVER"].item)==0)then
+					player:SendBroadcastMessage("You Loco .. you dont have enough currency to enter.")
+				else
+					EnterLotto(player:GetName(), id)
+				end
 			end
-			LottoOnHello(1, player, unit)
+		LottoOnHello(1, player, unit)
 	end
 end
 
