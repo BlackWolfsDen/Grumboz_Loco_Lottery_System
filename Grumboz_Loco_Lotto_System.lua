@@ -106,7 +106,7 @@ print("tally")
 		SendWorldMessage("Not enough Loco Lotto Entries this round.")
 	else
 		local multiplier = math.random(1, LottoSettings["SERVER"].mumax)
-		local win = math.random(1, 1) -- #LottoEntriez)
+		local win = math.random(1, #LottoEntriez)
 		local name = LottoEntriez[win].name
 		local player = GetPlayerByName(name)
 
