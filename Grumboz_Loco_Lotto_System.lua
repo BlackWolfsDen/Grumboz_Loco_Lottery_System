@@ -36,7 +36,6 @@ LottoEntriez["SERVER"].pot = 0;
 			end
 		until not LE:NextRow()
 	end
-	
 end
 
 LottoLoader(1)
@@ -72,13 +71,11 @@ local function EnterLotto(name, id)
 	LottoEntriez[id].count = elcount
 	GetPlayerByName(name):SendBroadcastMessage("You have entered "..elcount.." times.")
 	LottoEntriez["SERVER"].pot = ((LottoEntriez["SERVER"].pot)+(elcount))
-	
 end
 
 local function FlushLotto(id)
 	WorldDBQuery("UPDATE lotto.entries SET `count` = '0' WHERE `id` = '"..id.."';")
 	LottoEntries[id].count = 0
-	
 end
 
 local function Tally(event)
