@@ -40,6 +40,23 @@ end
 
 LottoLoader(1)
 
+local function UpdateLottoEntriez()
+LottoEntriez = {};
+LottoEntriez["SERVER"] = {
+				pot = 0
+						};
+	for a=1, #LottoEntries do
+		if(LottoEntries[a].count > 0)then
+			LottoEntriez[(#LottoEntriez+1)] = {
+								id = LottoEntries[a].id,
+								name = LottoEntries[a].name,
+								count = LottoEntries[a].count
+											};
+			LottoEntriez["SERVER"].pot = ((LottoEntriez["SERVER"].pot)+(LottoEntries[a].count))
+		end
+	end
+end
+
 local function GetId(name)
 	for id=1, #LottoEntries do
 		if(LottoEntries[id].name==name)then
@@ -82,6 +99,7 @@ local function FlushLotto(id)
 end
 
 local function Tally(event)
+UpdateLottoEntriez()
 print("tally")
 	if(#LottoEntriez < 4)then
 		SendWorldMessage("Not enough Loco Lotto Entries this round.")
