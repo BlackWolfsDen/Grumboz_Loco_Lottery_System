@@ -35,7 +35,7 @@ LottoLoader(1)
 local function GetEntries()
 end
  
- GetEntries()
+GetEntries()
  
 local function GetId(name)
 	for id=1, #LottoEntries do
@@ -88,8 +88,6 @@ Lotto["SERVER"] = {
 		end
 	end
 	
-print("tally")
-
 	if(#LottoEntriez < 4)then
 		SendWorldMessage("Not enough Loco Lotto Entries this round.")
 	else
@@ -102,6 +100,7 @@ print("tally")
 				local bet = ((LottoEntriez[win].count)*multiplier)
 				SendWorldMessage("Contgratulations to "..LottoEntriez[win].name.." our new winner. Total:"..(Lotto["SERVER"].pot+bet)..". Its LOCO!!")
 				player:AddItem(LottoSettings["SERVER"].item, (Lotto["SERVER"].pot+bet))
+				print("Loco Lotto -- :Name:"..name..".:Pot:"..Lotto["SERVER"].pot..".:Wager:"..LottoEntriez[win].count..".:Multiplier:"..multiplier)
 			
 				for a=1, #LottoEntries do
 					FlushLotto(a)
