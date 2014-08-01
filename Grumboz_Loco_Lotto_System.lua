@@ -32,11 +32,6 @@ end
 
 LottoLoader(1)
 
-local function GetEntries()
-end
- 
-GetEntries()
- 
 local function GetId(name)
 	for id=1, #LottoEntries do
 		if(LottoEntries[id].name==name)then
