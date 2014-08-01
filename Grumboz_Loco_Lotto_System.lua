@@ -14,7 +14,7 @@ local LS = WorldDBQuery("SELECT * FROM lotto.settings;");
 				timer = LS:GetUInt32(2),
 				operation = LS:GetUInt32(3),
 				mumax = LS:GetUInt32(4)
-										};
+						};
 		until not LS:NextRow()
 	end	
 	
@@ -22,10 +22,10 @@ local LE = WorldDBQuery("SELECT * FROM lotto.entries;");
 	if(LE)then
 		repeat
 			LottoEntries[LE:GetUInt32(0)] = {
-								id = LE:GetUInt32(0),
-								name = LE:GetString(1),
-								count = LE:GetUInt32(2)
-											};
+					id = LE:GetUInt32(0),
+					name = LE:GetString(1),
+					count = LE:GetUInt32(2)
+							};
 		until not LE:NextRow()
 	end
 end
@@ -51,10 +51,10 @@ local NLEID = (#LottoEntries+1)
 WorldDBExecute("REPLACE INTO lotto.entries SET `name`='"..name.."';")
 
 LottoEntries[NLEID] = {
-			id = NLEID,
-			name = name,
-			count = 0
-					};
+		id = NLEID,
+		name = name,
+		count = 0
+			};
 end
 
 local function EnterLotto(name, id)
@@ -73,9 +73,9 @@ end
 local function Tally(event)
 LottoEntriez = {};
 Lotto["SERVER"] = {
-			pot = 0
-					};
-					
+		pot = 0
+		};
+				
 	for a=1, #LottoEntries do
 	
 		if(LottoEntries[a].count > 0)then
@@ -122,12 +122,12 @@ local lohid = GetId(player:GetName())
 		NewLottoEntry(player:GetName(), 0)
 		LottoOnHello(event, player, unit)
 	else
-	VendorRemoveAllItems(npcid)
-	player:GossipClearMenu()
-	player:GossipMenuAddItem(0, "You have entered "..LottoEntries[lohid].count.." times", 0, 10)
-	player:GossipMenuAddItem(0, "Enter the lotto.", 0, 100)
-	player:GossipMenuAddItem(0, "never mind.", 0, 11)
-	player:GossipSendMenu(1, unit)
+		VendorRemoveAllItems(npcid)
+		player:GossipClearMenu()
+		player:GossipMenuAddItem(0, "You have entered "..LottoEntries[lohid].count.." times", 0, 10)
+		player:GossipMenuAddItem(0, "Enter the lotto.", 0, 100)
+		player:GossipMenuAddItem(0, "never mind.", 0, 11)
+		player:GossipSendMenu(1, unit)
 	end
 end
 
