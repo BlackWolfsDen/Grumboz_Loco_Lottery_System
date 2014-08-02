@@ -14,7 +14,8 @@ local LS = WorldDBQuery("SELECT * FROM lotto.settings;");
 				cost = LS:GetUInt32(2),
 				timer = LS:GetUInt32(3),
 				operation = LS:GetUInt32(4),
-				mumax = LS:GetUInt32(5)
+				rndmax = LS:GetUInt32(5),
+				require = LS:GetUInt32(6)
 					};
 		until not LS:NextRow()
 	end	
@@ -86,10 +87,10 @@ Lotto = {
 		end
 	end
 	
-	if(#LottoEntriez < 4)then
+	if(#LottoEntriez < LottoSettings.require)then
 		SendWorldMessage("Not enough Loco Lotto Entries this round.")
 	else
-		local multiplier = math.random(1, LottoSettings.mumax)
+		local multiplier = math.random(1, LottoSettings.rndmax)
 		local win = math.random(1, #LottoEntriez)
 		local name = LottoEntriez[win].name
 		local player = GetPlayerByName(name)
