@@ -69,7 +69,7 @@ local function FlushLotto(id)
 	end
 end
 
-local function Tally(event)
+local function GetEntriez()
 LottoEntriez = {};
 Lotto = {
 	pot = 0
@@ -86,24 +86,26 @@ Lotto = {
 			Lotto.pot = ((Lotto.pot)+(LottoEntries[a].count))
 		end
 	end
-	
-	if(#LottoEntriez < LottoSettings.require)then
+return #LottoEntriez;
+end
+
+local function Tally(event)
+local entriez = GetEntriez()	
+	if(entriez < LottoSettings.require)then
 		SendWorldMessage("Not enough Loco Lotto Entries this round.")
 	else
 		local multiplier = math.random(1, LottoSettings.rndmax)
-		local win = math.random(1, #LottoEntriez)
+		local win = math.random(1, entriez)
 		local name = LottoEntriez[win].name
 		local player = GetPlayerByName(name)
 		
 			if(player)then
-				local bet = ((LottoEntriez[win].count)*multiplier)
-				SendWorldMessage("Contgratulations to "..LottoEntriez[win].name.." our new winner. Total:"..(Lotto["SERVER"].pot+bet)..". Its LOCO!!")
-				player:AddItem(LottoSettings.item, (Lotto.pot+bet))
-				print("Loco Lotto -- :Name:"..name..".:Pot:"..Lotto.pot..".:Wager:"..LottoEntriez[win].count..".:Multiplier:"..multiplier)
-			
-				for a=1, #LottoEntries do
-					FlushLotto(a)
-				end
+				local bet = ((LottoEntriez[win].count * LottoSettings.cost) * multiplier)
+				local pot = ((Lotto.pot - LottoEntriez[win].count) * LottoSettings.cost)
+				SendWorldMessage("Contgratulations to "..LottoEntriez[win].name.." our new winner. Total:"..(pot + bet)..". Its LOCO!!")
+				player:AddItem(LottoSettings.item, (pot+bet))
+				print("Loco Lotto -- :Name:"..name..".:Pot:"..pot..".:Wager:"..LottoEntriez[win].count..".:Multiplier:"..multiplier)
+				FlushLotto(a)
 			else
 				SendWorldMessage("No Winners this Loco lotto round.")
 			end
