@@ -107,7 +107,7 @@ Lotto = {
 	end
 	
 	if(LottoSettings.operation==1)then
-		CreateLuaEvent(Tally, LottoSettings["SERVER"].timer, 1)
+		CreateLuaEvent(Tally, LottoSettings.timer, 1)
 	end
 end
 
