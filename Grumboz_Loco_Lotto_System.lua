@@ -93,6 +93,7 @@ local function Tally(event)
 local entriez = GetEntriez()	
 	if(entriez < LottoSettings.require)then
 		SendWorldMessage("Not enough Loco Lotto Entries this round.")
+		SendWorldMessage("Visit a Loco Lotto Vendor to join.")
 	else
 		local multiplier = math.random(1, LottoSettings.rndmax)
 		local win = math.random(1, entriez)
@@ -107,6 +108,7 @@ local entriez = GetEntriez()
 				print("Loco Lotto -- :Name:"..name..".:Pot:"..pot..".:Wager:"..LottoEntriez[win].count..".:Multiplier:"..multiplier)
 				FlushLotto(a)
 			else
+				SendWorldMessage("You must be logged in to recieve winnings from the Loco Lotto.")
 				SendWorldMessage("No Winners this Loco lotto round.")
 			end
 	end
