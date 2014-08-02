@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `cost` tinyint(3) unsigned NOT NULL,
   `timer` int(10) unsigned NOT NULL,
   `operation` tinyint(1) unsigned NOT NULL DEFAULT '0',
-  `mumax` tinyint(1) unsigned NOT NULL DEFAULT '0',
+  `rndmax` int(3) unsigned NOT NULL DEFAULT '1',
   `require` tinyint(3) unsigned NOT NULL DEFAULT '4',
   `comments` varchar(21844) NOT NULL,
   KEY `id` (`id`)
