@@ -61,9 +61,11 @@ local function EnterLotto(name, id)
 end
 
 local function FlushLotto(id)
-	WorldDBQuery("UPDATE lotto.entries SET `count` = '0' WHERE `id` = '"..id.."';")
-	LottoEntries[id].count = 0
-
+	WorldDBQuery("UPDATE lotto.entries SET `count` = '0';")
+	
+	for a=1, #LottoEntries do
+		LottoEntries[a].count = 0
+	end
 end
 
 local function Tally(event)
