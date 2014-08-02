@@ -18,7 +18,7 @@ USE `lotto`;
 -- Dumping structure for table lotto.entries
 CREATE TABLE IF NOT EXISTS `entries` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `name` int(11) unsigned NOT NULL,
+  `name` varchar(20) NOT NULL,
   `count` int(11) unsigned NOT NULL DEFAULT '0',
   KEY `id` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
