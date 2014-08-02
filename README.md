@@ -14,7 +14,7 @@ this will choose at random a player who has entered the lottery :
 
 the multiplier max value can be changed in the sql table lotto.settings.rndmax .
 the minimum required players can be changed in the sql table lotto.settings.require .
-system can be turned on/off in the sql table lotto.settings.operation
+the system can be turned on/off in the sql table lotto.settings.operation
 the custom currency id can also be changed within the sql table.
 the amount of currency required can be changed within the sql table.
 the way it operates can be changed in the sql table.
