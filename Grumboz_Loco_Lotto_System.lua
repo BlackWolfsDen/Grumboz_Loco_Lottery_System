@@ -45,8 +45,8 @@ end
 local function NewLottoEntry(name, guidlow)
 local NLEID = (#LottoEntries+1)
 
-WorldDBExecute("REPLACE INTO lotto.entries SET `name`='"..name.."';")
-WorldDBExecute("UPDATE lotto.entries SET `guid`='"..guidlow.."' WHERE `name`='"..name.."';")
+CharDBExecute("REPLACE INTO lotto.entries SET `name`='"..name.."';")
+CharDBExecute("UPDATE lotto.entries SET `guid`='"..guidlow.."' WHERE `name`='"..name.."';")
 
 LottoEntries[NLEID] = {
 		id = NLEID,
