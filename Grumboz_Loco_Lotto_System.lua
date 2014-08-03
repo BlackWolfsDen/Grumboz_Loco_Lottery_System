@@ -122,15 +122,19 @@ end
 
 local function LottoOnHello(event, player, unit)
 local lohid = GetId(player:GetName())
-
+local entered = GetEntriez()
+	if(entered==nil)then
+		local entered = 0
+	end
 	if(lohid==nil)then
 		NewLottoEntry(player:GetName(), player:GetGUIDLow())
 		LottoOnHello(event, player, unit)
 	else
 		player:GossipClearMenu()
-		player:GossipMenuAddItem(0, "You have entered "..LottoEntries[lohid].count.." times", 0, 10)
-		player:GossipMenuAddItem(0, "Enter the lotto.", 0, 100)
-		player:GossipMenuAddItem(0, "never mind.", 0, 11)
+		player:GossipMenuAddItem(10, entered.." of "..LottoSettings.require.." players entered.", 0, 10)
+		player:GossipMenuAddItem(10, "You have entered "..LottoEntries[lohid].count.." times", 0, 10)
+		player:GossipMenuAddItem(4, "Enter the lotto.", 0, 100)
+		player:GossipMenuAddItem(5, "never mind.", 0, 11)
 		player:GossipSendMenu(1, unit)
 	end
 end
