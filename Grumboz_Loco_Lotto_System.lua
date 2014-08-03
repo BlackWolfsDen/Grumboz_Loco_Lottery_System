@@ -42,7 +42,7 @@ local function GetId(name)
 	end
 end
 
-local function NewLottoEntry(name, chain)
+local function NewLottoEntry(name, guidlow)
 local NLEID = (#LottoEntries+1)
 
 WorldDBExecute("REPLACE INTO lotto.entries SET `name`='"..name.."';")
@@ -50,6 +50,7 @@ WorldDBExecute("REPLACE INTO lotto.entries SET `name`='"..name.."';")
 LottoEntries[NLEID] = {
 		id = NLEID,
 		name = name,
+		guid = guidlow,
 		count = 0
 			};
 end
@@ -122,7 +123,7 @@ local function LottoOnHello(event, player, unit)
 local lohid = GetId(player:GetName())
 
 	if(lohid==nil)then
-		NewLottoEntry(player:GetName(), 0)
+		NewLottoEntry(player:GetName(), player:GetGUIDLow())
 		LottoOnHello(event, player, unit)
 	else
 		VendorRemoveAllItems(npcid)
