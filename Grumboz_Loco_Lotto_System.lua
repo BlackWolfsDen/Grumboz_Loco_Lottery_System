@@ -127,7 +127,6 @@ local lohid = GetId(player:GetName())
 		NewLottoEntry(player:GetName(), player:GetGUIDLow())
 		LottoOnHello(event, player, unit)
 	else
-		VendorRemoveAllItems(npcid)
 		player:GossipClearMenu()
 		player:GossipMenuAddItem(0, "You have entered "..LottoEntries[lohid].count.." times", 0, 10)
 		player:GossipMenuAddItem(0, "Enter the lotto.", 0, 100)
