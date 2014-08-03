@@ -26,7 +26,8 @@ local LE = WorldDBQuery("SELECT * FROM lotto.entries;");
 			LottoEntries[LE:GetUInt32(0)] = {
 					id = LE:GetUInt32(0),
 					name = LE:GetString(1),
-					count = LE:GetUInt32(2)
+					guid = LE:GetUInt32(2),
+					count = LE:GetUInt32(3)
 							};
 		until not LE:NextRow()
 	end
