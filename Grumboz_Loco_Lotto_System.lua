@@ -116,9 +116,10 @@ local entriez = GetEntriez()
 			end
 	end
 	
-	if(LottoSettings.operation==1)then
-		CreateLuaEvent(Tally, LottoSettings.timer, 1)
-	end
+    	if (LottoSettings.operation ~= 1) then
+        	RemoveEventById(LottoTimer)
+        	LottoTimer = nil
+        end
 end
 
 local function LottoOnHello(event, player, unit)
@@ -170,7 +171,7 @@ RegisterCreatureGossipEvent(npcid, 2, LottoOnSelect)
 print("Grumbo'z Loco Lotto Operational.")
 
 	if(LottoSettings.operation==1)then
-		CreateLuaEvent(Tally, LottoSettings.timer, 1)
+    		LottoTimer = CreateLuaEvent(Tally, LottoSettings.timer, 0)
 		print("...Lotto Started...")
 	else
 		print("...System idle...")
