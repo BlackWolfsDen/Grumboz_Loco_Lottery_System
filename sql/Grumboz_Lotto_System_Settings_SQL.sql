@@ -48,4 +48,4 @@ DELETE FROM `settings`;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 INSERT INTO `settings` (`item`, `cost`, `timer`, `operation`, `rndmax`, `require`, `comments`) VALUES
-(44209, 1, 30000, 1, 10, 4, 'item :\r\nthe item id for what they will win(custom currency)\r\n\r\ncost:\r\nhow many of (item) per entry\r\n\r\ntimer:\r\n604800000 == 1 week\r\n86400000 == 1 day\r\n3600000 == 1 hour\r\n900000 == 15 minutes\r\n600000 == 10 minutes\r\n60000 == 1 minute\r\n\r\nrequire:\r\nhow many entrries are required for the lotto to search for a winner.\r\ndefault = 4\r\n');
+(44209, 1, 600000, 1, 10, 4, 'item :\r\nthe item id for what they will win(custom currency)\r\n\r\ncost:\r\nhow many of (item) per entry\r\n\r\ntimer:\r\n604800000 == 1 week\r\n86400000 == 1 day\r\n3600000 == 1 hour\r\n900000 == 15 minutes\r\n600000 == 10 minutes\r\n60000 == 1 minute\r\n\r\nrequire:\r\nhow many entrries are required for the lotto to search for a winner.\r\ndefault = 4\r\n');
