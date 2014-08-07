@@ -15,7 +15,8 @@ local LS = WorldDBQuery("SELECT * FROM lotto.settings;");
 				timer = LS:GetUInt32(2),
 				operation = LS:GetUInt32(3),
 				rndmax = LS:GetUInt32(4),
-				require = LS:GetUInt32(5)
+				require = LS:GetUInt32(5),
+				maxcount = LS:GetUInt32(6)
 					};
 		until not LS:NextRow()
 	end	
@@ -170,8 +171,12 @@ local function LottoOnSelect(event, player, unit, sender, intid, code)
 				if(player:GetItemCount(LottoSettings.item)==0)then
 					player:SendBroadcastMessage("You Loco .. you dont have enough currency to enter.")
 				else
- 					player:RemoveItem(LottoSettings.item, LottoSettings.cost)
-					EnterLotto(player:GetName(), id)
+					if(LottoEntries[id].count < LottoSettings.maxcount)or(LottoSettings.maxcount==0)then
+ 						player:RemoveItem(LottoSettings.item, LottoSettings.cost)
+						EnterLotto(player:GetName(), id)
+					else
+						player:SendBroadcastMessage("You Loco .. you can only enter "..LottoSettings.maxcount.." times.")
+					end
 				end
 			end
 		LottoOnHello(1, player, unit)
