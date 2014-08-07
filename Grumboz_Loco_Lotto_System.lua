@@ -35,6 +35,19 @@ end
 
 LottoLoader(1)
 
+local function GetItemNameById(id)
+local err = "ERROR GetItemById() name value is nil(Item "..id.." May not exist in database)"
+local search = WorldDBQuery("SELECT `name` FROM `item_template` WHERE `entry` = '"..id.."';");
+
+
+	if(search)then
+		local itemname = search:GetString(0)
+		return(itemname)
+	else
+		error(err)
+	end
+end
+
 local function GetId(name)
 	for id=1, #LottoEntries do
 		if(LottoEntries[id].name==name)then
@@ -135,7 +148,7 @@ local entered = GetEntriez()
 		player:GossipClearMenu()
 		player:GossipMenuAddItem(10, entered.." of "..LottoSettings.require.." players entered.", 0, 10)
 		player:GossipMenuAddItem(10, "You have entered "..LottoEntries[lohid].count.." times", 0, 10)
-		player:GossipMenuAddItem(4, "Enter the lotto.", 0, 100)
+		player:GossipMenuAddItem(4, "Enter the lotto. Cost "..LottoSettings.cost.." "..GetItemNameById(LottoSettings.item).."'s.", 0, 100)
 		player:GossipMenuAddItem(5, "never mind.", 0, 11)
 		player:GossipSendMenu(1, unit)
 	end
