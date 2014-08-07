@@ -23,4 +23,6 @@ the amount of currency required can be changed within the sql table.
 
 the way it operates can be changed in the sql table.
 
+the maximum amount of entries per character can be adjusted in the settings sql . 0 == infinate // 1+ == max
+
 This is currently set to fire every 15 minutes.
