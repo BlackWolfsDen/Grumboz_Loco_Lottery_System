@@ -22,10 +22,9 @@ CREATE TABLE IF NOT EXISTS `entries` (
   `guid` int(11) NOT NULL,
   `count` int(11) unsigned NOT NULL DEFAULT '0',
   KEY `id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- Dumping data for table lotto.entries: ~7 rows (approximately)
-DELETE FROM `entries`;
+-- Dumping data for table lotto.entries: ~0 rows (approximately)
 /*!40000 ALTER TABLE `entries` DISABLE KEYS */;
 /*!40000 ALTER TABLE `entries` ENABLE KEYS */;
 
@@ -38,14 +37,14 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `operation` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `rndmax` int(3) unsigned NOT NULL DEFAULT '1',
   `require` tinyint(3) unsigned NOT NULL DEFAULT '4',
+  `maxcount` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `comments` varchar(11844) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 MAX_ROWS=1;
 
 -- Dumping data for table lotto.settings: 1 rows
-DELETE FROM `settings`;
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
-INSERT INTO `settings` (`item`, `cost`, `timer`, `operation`, `rndmax`, `require`, `comments`) VALUES
-	(44209, 1, 600000, 1, 10, 4, 'item :\r\nthe item id for what they will win(custom currency)\r\n\r\ncost:\r\nhow many of (item) per entry\r\n\r\ntimer:\r\n604800000 == 1 week\r\n86400000 == 1 day\r\n3600000 == 1 hour\r\n1800000 == 30 minutes\r\n900000 == 15 minutes\r\n600000 == 10 minutes\r\n60000 == 1 minute\r\n\r\nrequire:\r\nhow many entrries are required for the lotto to search for a winner.\r\ndefault = 4\r\n');
+INSERT INTO `settings` (`item`, `cost`, `timer`, `operation`, `rndmax`, `require`, `maxcount`, `comments`) VALUES
+	(44209, 1, 60000, 1, 10, 4, 3, 'item :\r\nthe item id for what they will win(custom currency)\r\n\r\ncost:\r\nhow many of (item) per entry\r\n\r\ntimer:\r\n604800000 == 1 week\r\n86400000 == 1 day\r\n3600000 == 1 hour\r\n1800000 == 30 minutes\r\n900000 == 15 minutes\r\n600000 == 10 minutes\r\n60000 == 1 minute\r\n\r\nrequire:\r\nhow many entrries are required for the lotto to search for a winner.\r\ndefault = 4\r\n');
 /*!40000 ALTER TABLE `settings` ENABLE KEYS */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
