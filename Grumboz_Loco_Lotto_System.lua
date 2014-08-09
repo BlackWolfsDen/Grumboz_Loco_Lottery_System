@@ -1,4 +1,4 @@
-print("\n-----------------------------------")
+print("-----------------------------------")
 print("Grumbo\'z Loco Lotto starting ...\n")
 local npcid = 390000
 Lotto = {};
@@ -194,5 +194,5 @@ print("Grumbo'z Loco Lotto Operational.")
 	else
 		print("...System idle...")
 	end
-print("-----------------------------------\n")
+print("-----------------------------------")
  
