@@ -113,6 +113,9 @@ local entriez = GetEntriez()
 		SendWorldMessage("Not enough Loco Lotto Entries this round.")
 		SendWorldMessage("Visit a Loco Lotto Vendor to join.")
 	else
+		local ostime = tonumber(GetGameTime())
+		local seed = (ostime*ostime)
+		math.randomseed(seed)
 		local multiplier = math.random(1, LottoSettings.rndmax)
 		local win = math.random(1, entriez)
 		local name = LottoEntriez[win].name
