@@ -168,20 +168,24 @@ local function LottoOnSelect(event, player, unit, sender, intid, code)
 	end
 
 	if(intid==100)then
-		local id = GetId(player:GetName())
-			if(id)then
-				if(player:GetItemCount(LottoSettings.item)==0)then
-					player:SendBroadcastMessage("You Loco .. you dont have enough currency to enter.")
-				else
+
+		if(player:GetItemCount(LottoSettings.item) >= LottoSettings.cost)then
+		
+			local id = GetId(player:GetName())
+			
+				if(id)then
 					if(LottoEntries[id].count < LottoSettings.maxcount)or(LottoSettings.maxcount==0)then
- 						player:RemoveItem(LottoSettings.item, LottoSettings.cost)
-						EnterLotto(player:GetName(), id)
+ 							player:RemoveItem(LottoSettings.item, LottoSettings.cost)
+							EnterLotto(player:GetName(), id)
 					else
-						player:SendBroadcastMessage("You Loco .. you can only enter "..LottoSettings.maxcount.." times.")
+							player:SendBroadcastMessage("You Loco .. you can only enter "..LottoSettings.maxcount.." times.")
 					end
+					LottoOnHello(1, player, unit)
 				end
-			end
-		LottoOnHello(1, player, unit)
+		else
+			player:SendBroadcastMessage("You Loco .. you dont have enough currency to enter.")
+			player:GossipComplete()
+		end
 	end
 end
 
