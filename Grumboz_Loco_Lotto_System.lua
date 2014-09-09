@@ -24,14 +24,16 @@ local LS = WorldDBQuery("SELECT * FROM lotto.settings;");
 	
 local LE = WorldDBQuery("SELECT * FROM lotto.entries;");
 	if(LE)then
-		repeat
-			LottoEntries[LE:GetUInt32(0)] = {
-					id = LE:GetUInt32(0),
-					name = LE:GetString(1),
-					guid = LE:GetUInt32(2),
-					count = LE:GetUInt32(3)
-							};
-		until not LE:NextRow()
+		LottoEntries.pot = 0
+			repeat
+				LottoEntries[LE:GetUInt32(0)] = {
+						id = LE:GetUInt32(0),
+						name = LE:GetString(1),
+						guid = LE:GetUInt32(2),
+						count = LE:GetUInt32(3)
+								};
+				LottoEntries.pot = LottoEntries.pot + LE:GetUInt32(3)
+			until not LE:NextRow()
 	end
 end
 
@@ -49,6 +51,8 @@ local search = WorldDBQuery("SELECT `name` FROM `item_template` WHERE `entry` = 
 		error(err)
 	end
 end
+
+local currency_name = GetItemById(LottoSettings.item)
 
 local function GetId(name)
 	for id=1, #LottoEntries do
@@ -76,6 +80,7 @@ local function EnterLotto(name, id)
 	local elcount = LottoEntries[id].count + 1
 	WorldDBQuery("UPDATE lotto.entries SET `count` = '"..elcount.."' WHERE `name` = '"..name.."';")
 	LottoEntries[id].count = elcount
+	LottoEntries.pot = LottoEntries.pot + LottoSettings.cost
 	GetPlayerByName(name):SendBroadcastMessage("You have entered "..elcount.." times.")
 end
 
@@ -126,6 +131,7 @@ local entriez = GetEntriez()
 				player:AddItem(LottoSettings.item, (pot+bet))
 				print("Loco Lotto -- :Name:"..name..".:Pot:"..pot..".:Wager:"..LottoEntriez[win].count..".:Multiplier:"..multiplier)
 				FlushLotto(a)
+				LottoEntries.pot = 0
 			else
 				SendWorldMessage("You must be logged in to recieve winnings from the Loco Lotto.")
 				SendWorldMessage("No Winners this Loco lotto round.")
@@ -150,6 +156,7 @@ local entered = GetEntriez()
 	else
 		player:GossipClearMenu()
 		player:GossipMenuAddItem(10, entered.." of "..LottoSettings.require.." players entered.", 0, 10)
+		player:GossipMenuAddItem(10, "Current Pot: "..LottoEntries.pot, 0, 10)
 		player:GossipMenuAddItem(10, "You have entered "..LottoEntries[lohid].count.." times", 0, 10)
 		player:GossipMenuAddItem(4, "Enter the lotto. Cost "..LottoSettings.cost.." "..GetItemNameById(LottoSettings.item).."'s.", 0, 100)
 		player:GossipMenuAddItem(5, "never mind.", 0, 11)
