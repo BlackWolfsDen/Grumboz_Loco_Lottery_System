@@ -18,6 +18,7 @@ local LS = WorldDBQuery("SELECT * FROM lotto.settings;");
 				rndmax = LS:GetUInt32(4),
 				require = LS:GetUInt32(5),
 				maxcount = LS:GetUInt32(6)
+				display_pot = LS:GetUInt32(7)
 					};
 		until not LS:NextRow()
 	end	
@@ -156,7 +157,11 @@ local entered = GetEntriez()
 	else
 		player:GossipClearMenu()
 		player:GossipMenuAddItem(10, entered.." of "..LottoSettings.require.." players entered.", 0, 10)
-		player:GossipMenuAddItem(10, "Current Pot: "..LottoEntries.pot, 0, 10)
+			
+			if(LottoSettings.display_pot == 1)then
+				player:GossipMenuAddItem(10, "Current Pot: "..LottoEntries.pot, 0, 10)
+			end
+			
 		player:GossipMenuAddItem(10, "You have entered "..LottoEntries[lohid].count.." times", 0, 10)
 		player:GossipMenuAddItem(4, "Enter the lotto. Cost "..LottoSettings.cost.." "..GetItemNameById(LottoSettings.item).."'s.", 0, 100)
 		player:GossipMenuAddItem(5, "never mind.", 0, 11)
