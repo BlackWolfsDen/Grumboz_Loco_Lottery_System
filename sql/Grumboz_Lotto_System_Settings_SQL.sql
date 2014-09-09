@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
 -- Dumping data for table lotto.settings: 1 rows
 /*!40000 ALTER TABLE `settings` DISABLE KEYS */;
 INSERT INTO `settings` (`item`, `cost`, `timer`, `operation`, `rndmax`, `require`, `maxcount`, `comments`) VALUES
-	(44209, 1, 1800000, 1, 10, 4, 3, 'item :\r\nthe item id for what they will win(custom currency)\r\n\r\ncost:\r\nhow many of (item) per entry\r\n\r\ntimer:\r\n604800000 == 1 week\r\n86400000 == 1 day\r\n3600000 == 1 hour\r\n1800000 == 30 minutes\r\n900000 == 15 minutes\r\n600000 == 10 minutes\r\n60000 == 1 minute\r\n\r\nrequire:\r\nhow many entrries are required for the lotto to search for a winner.\r\ndefault = 4\r\nmaxcount:\r\nhow many times a player can enter a lotto\r\n0 == infinate amount of entries.\r\n1+ == max amount a player can enter per lotto');
+	(44209, 1, 1800000, 1, 10, 4, 0, 1, 'item :\r\nthe item id for what they will win(custom currency)\r\n\r\ncost:\r\nhow many of (item) per entry\r\n\r\ntimer:\r\n604800000 == 1 week\r\n86400000 == 1 day\r\n3600000 == 1 hour\r\n1800000 == 30 minutes\r\n900000 == 15 minutes\r\n600000 == 10 minutes\r\n60000 == 1 minute\r\n\r\nrequire:\r\nhow many entrries are required for the lotto to search for a winner.\r\ndefault = 4\r\nmaxcount:\r\nhow many times a player can enter a lotto\r\n0 == infinate amount of entries.\r\n1+ == max amount a player can enter per lotto');
 /*!40000 ALTER TABLE `settings` ENABLE KEYS */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
