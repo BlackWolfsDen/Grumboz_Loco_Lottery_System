@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS `settings` (
   `rndmax` int(3) unsigned NOT NULL DEFAULT '1',
   `require` tinyint(3) unsigned NOT NULL DEFAULT '4',
   `maxcount` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `display_pot` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `comments` varchar(11844) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1 MAX_ROWS=1;
 
