@@ -40,20 +40,7 @@ end
 
 LottoLoader(1)
 
-local function GetItemNameById(id)
-local err = "ERROR GetItemById() name value is nil(Item "..id.." May not exist in database)"
-local search = WorldDBQuery("SELECT `name` FROM `item_template` WHERE `entry` = '"..id.."';");
-
-
-	if(search)then
-		local itemname = search:GetString(0)
-		return(itemname)
-	else
-		error(err)
-	end
-end
-
-local currency_name = GetItemById(LottoSettings.item)
+local currency_name = GetItemLink(LottoSettings.item)
 
 local function GetId(name)
 	for id=1, #LottoEntries do
