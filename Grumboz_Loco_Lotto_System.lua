@@ -2,12 +2,13 @@
 print("-----------------------------------")
 print("Grumbo\'z Loco Lotto starting ...\n")
 local npcid = 390000
+local Lotto_Table = "lotto"
 Lotto = {};
 LottoSettings = {};
 LottoEntries = {};
 
 local function LottoLoader(event)
-local LS = WorldDBQuery("SELECT * FROM lotto.settings;");
+local LS = WorldDBQuery("SELECT * FROM "..Lotto_Table..".settings;");
 	if(LS)then
 		repeat
 			LottoSettings = {
@@ -23,7 +24,7 @@ local LS = WorldDBQuery("SELECT * FROM lotto.settings;");
 		until not LS:NextRow()
 	end	
 	
-local LE = WorldDBQuery("SELECT * FROM lotto.entries;");
+local LE = WorldDBQuery("SELECT * FROM "..Lotto_Table..".entries;");
 	if(LE)then
 		LottoEntries.pot = 0
 			repeat
@@ -53,8 +54,8 @@ end
 local function NewLottoEntry(name, guidlow)
 local NLEID = (#LottoEntries+1)
 
-CharDBExecute("REPLACE INTO lotto.entries SET `name`='"..name.."';")
-CharDBExecute("UPDATE lotto.entries SET `guid`='"..guidlow.."' WHERE `name`='"..name.."';")
+CharDBExecute("REPLACE INTO "..Lotto_Table..".entries SET `name`='"..name.."';")
+CharDBExecute("UPDATE "..Lotto_Table..".entries SET `guid`='"..guidlow.."' WHERE `name`='"..name.."';")
 
 LottoEntries[NLEID] = {
 		id = NLEID,
@@ -66,14 +67,14 @@ end
 
 local function EnterLotto(name, id)
 	local elcount = LottoEntries[id].count + 1
-	WorldDBQuery("UPDATE lotto.entries SET `count` = '"..elcount.."' WHERE `name` = '"..name.."';")
+	WorldDBQuery("UPDATE "..Lotto_Table..".entries SET `count` = '"..elcount.."' WHERE `name` = '"..name.."';")
 	LottoEntries[id].count = elcount
 	LottoEntries.pot = LottoEntries.pot + LottoSettings.cost
 	GetPlayerByName(name):SendBroadcastMessage("You have entered "..elcount.." times.")
 end
 
 local function FlushLotto(id)
-	WorldDBQuery("UPDATE lotto.entries SET `count` = '0';")
+	WorldDBQuery("UPDATE "..Lotto_Table..".entries SET `count` = '0';")
 	
 	for a=1, #LottoEntries do
 		LottoEntries[a].count = 0
