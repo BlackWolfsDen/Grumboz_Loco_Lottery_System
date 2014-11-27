@@ -1,5 +1,5 @@
 -- From the mad scientist slp13at420 of EmuDevs.com
-print("-----------------------------------")
+print("-----------------©-----------------")
 print("Grumbo\'z Loco Lotto starting ...\n")
 local npcid = 390000
 local Lotto_Table = "lotto"
