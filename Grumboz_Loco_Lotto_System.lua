@@ -20,7 +20,7 @@ local LS = WorldDBQuery("SELECT * FROM "..Lotto_Table..".settings;");
 				require = LS:GetUInt32(5),
 				maxcount = LS:GetUInt32(6)
 				display_pot = LS:GetUInt32(7)
-					};
+			};
 		until not LS:NextRow()
 	end	
 	
@@ -33,7 +33,7 @@ local LE = WorldDBQuery("SELECT * FROM "..Lotto_Table..".entries;");
 						name = LE:GetString(1),
 						guid = LE:GetUInt32(2),
 						count = LE:GetUInt32(3)
-								};
+				};
 				LottoEntries.pot = LottoEntries.pot + LE:GetUInt32(3)
 			until not LE:NextRow()
 	end
@@ -62,7 +62,7 @@ LottoEntries[NLEID] = {
 		name = name,
 		guid = guidlow,
 		count = 0
-			};
+};
 end
 
 local function EnterLotto(name, id)
@@ -82,11 +82,13 @@ local function FlushLotto(id)
 end
 
 local function GetEntriez()
+
 LottoEntriez = {};
+
 Lotto = {
 	pot = 0
-	};
-				
+};
+			
 	for a=1, #LottoEntries do
 	
 		if(LottoEntries[a].count > 0)then
