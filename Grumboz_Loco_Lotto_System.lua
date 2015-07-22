@@ -1,8 +1,8 @@
 -- From the mad scientist slp13at420 of EmuDevs.com
-print("-----------------©-----------------")
-print("Grumbo\'z Loco Lotto starting ...\n")
-local npcid = 390000
-local Lotto_Table = "lotto"
+print("-----------------©-----------------");
+print("Grumbo\'z Loco Lotto starting ...\n");
+local npcid = 390000;
+local Lotto_Table = "lotto";
 Lotto = {};
 LottoSettings = {};
 LottoEntries = {};
